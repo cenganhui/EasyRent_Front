@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/main.css" />
+	</head>
+
+	<body>
+		<!--顶部-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+
+		<div class="mui-content">
+			<!--商品图片轮播-->
+			<div id="slider" class="mui-slider">
+				<div class="mui-slider-group mui-slider-loop">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="../image/phone3.jpg">
+						</a>
+					</div>
+					<!-- 第一张 -->
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="../image/phone1.png">
+						</a>
+					</div>
+					<!-- 第二张 -->
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="../image/phone2.jpg">
+						</a>
+					</div>
+					<!-- 第三张 -->
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="../image/phone3.jpg">
+						</a>
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="../image/phone1.png">
+						</a>
+					</div>
+				</div>
+				<div class="mui-slider-indicator">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+				</div>
+			</div>
+			<!--订单详情列表-->
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<div>
+						标题：
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						商品1
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						详情：
+					</div>
+					<div style="margin-right: 0;">
+						这是是艾弗森的房间爱丽丝肯德基福利卡设计费立刻就爱上了咖啡拉丝机静安寺蝶恋蜂狂静安寺路口的减肥了卡斯接待来访框架啊凉快圣诞节了开发 就爱上了副科级拉
+						斯会计分录卡视角了副科级阿斯利康
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						押金:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						1000
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						租金:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						200
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						卖家:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						用户2
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						买家:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						用户1
+					</div>
+				</li>
+				
+				<li class="mui-table-view-cell">
+					<div>
+						出租时间:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						2020-4-1
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						实际出租时间:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						2020-4-1
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						归还时间:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						2020-5-1
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						实际归还时间:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						2020-5-1
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						订单创建时间:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						2020-3-28
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						订单状态:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						已完成
+					</div>
+				</li>
+			</ul>
+			<!--订单相关操作按钮-->
+			<button type="button" class="mui-btn mui-btn-blue mui-btn-block">已完成</button>
+
+		</div>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>

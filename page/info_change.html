@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/main.css" />
+	</head>
+
+	<body>
+		<!--顶部-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">修改个人信息</h1>
+		</header>
+		
+		<div class="mui-content">
+			<!--头像-->
+			<div style="text-align: center;">
+				<img id="avatorImg" height="200px" width="200px" src="../image/phone.jpg" />
+			</div>
+			<!--个人信息修改输入-->
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>昵称</label>
+					<input id="nickNameInput" type="text" class="mui-input-clear" placeholder="输入新昵称">
+				</div>
+
+				<div class="mui-input-row">
+					<label>邮箱</label>
+					<input id="emailInput" type="text" class="mui-input-clear" placeholder="输入新邮箱">
+				</div>
+				<!--性别选择-->
+				<div class="mui-input-row">
+					<label>性别</label>
+				</div>
+				<select id="genderSelect">
+					<option value="0" selected="selected">男</option>
+					<option value="1">女</option>
+				</select>
+				<!--校区选择-->
+				<div class="mui-input-row">
+					<label>校区</label>
+				</div>
+				<select id="campusSelect">
+					<option value="0" selected="selected">南海校区</option>
+					<option value="1">大学城校区</option>
+					<option value="2">石牌校区</option>
+				</select>
+				<!--确认修改按钮-->
+				<button id="changeInfoBtn" type="button" class="mui-btn mui-btn-green mui-btn-block" style="margin-top: 10px;">
+					确认修改
+				</button>
+			</form>
+
+		</div>
+
+	</body>
+
+</html>
+
+<script src="../js/mui.min.js"></script>
+<script src="../js/er.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
+<script type="text/javascript">
+	mui.init({
+		beforeback: function() {   
+			//获得列表界面的webvie，var openView = plus.webview.currentWebview().opener();
+			var openView = plus.webview.currentWebview().opener();
+			//触发info界面的自定义事件（refresh）,从而进行数据刷新   
+			mui.fire(openView, "refresh");
+			//返回true，继续页面关闭逻辑     return true;  
+		} 
+	});
+</script>
+<script type="text/javascript">
+
+	jQuery("#changeInfoBtn").click(function(){
+		var nickName = jQuery("#nickNameInput").val();
+		var email = jQuery("#emailInput").val();
+		var gender = parseInt(jQuery("#genderSelect").val());
+		var campus = parseInt(jQuery("#campusSelect").val());
+		
+		var data = {
+			"nickName" : nickName,
+			"email" : email,
+			"gender" : gender,
+			"campus" : campus
+		};
+		console.log(JSON.stringify(data));
+		var flag = true;
+		//var flag = jsonHasEmpty(data);
+		if(flag){
+			jQuery.ajax({
+				method : "PUT",
+				url : getUrl() + "/api/v1/user",
+				contentType : "application/json;charset=utf-8",
+				data : JSON.stringify(data),
+				headers : {
+					"Authorization" : window.localStorage.getItem("token")
+				},
+				xhrFields : {
+					withCredentials : true
+				},
+				success : function(result){
+					
+					console.log("code:"+result.code+" msg:"+result.msg);
+					if(result.code == 200){
+						console.log("个人信息修改成功");
+						mui.toast("个人信息修改成功");
+						//更新的信息写回到localStorage中
+						window.localStorage.setItem("nickName",data.nickName);
+						window.localStorage.setItem("email",data.email);
+						window.localStorage.setItem("gender",data.gender);
+						window.localStorage.setItem("campus",data.campus);
+						
+						//获取父窗口（登录窗口）
+						//var openView = plus.webview.currentWebview().opener();
+						//var curView = plus.webview.currentWebview();
+						//判断是否存在父窗口,存在则关闭（关闭登录页面）
+						//openView.show();
+						//curView.hide();
+						//curView.close();
+						
+						//打开一个新聊天页面
+						// mui.openWindow({
+						// 	url: "../index.html",
+						// 	id: "../index.html",
+						// 	styles: {
+						
+						// 	},
+						// 	extras: {
+								
+						// 	},
+						// 	show: {
+						// 		autoShow: true, //页面loaded事件发生后自动显示，默认为true
+						// 		aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+						// 		duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+						// 	},
+						// 	waiting: {
+						// 		autoShow: true, //自动显示等待框，默认为true
+						// 		title: '正在加载...', //等待对话框上显示的提示内容
+						// 		options: {
+						// 			//width
+						// 			//height
+						// 		}
+						// 	}
+						// });
+						
+					}
+					else{
+						alert("其他错误！");
+					}
+				},
+				error : function(e){
+					console.log(e.status);
+					console.log(e.responseText);
+				}
+			});
+		}
+		else{
+			mui.toast("信息不全");
+		}
+		
+	});
+	
+	//为更换头像绑定事件
+	var avatorImg = document.getElementById("avatorImg");
+	avatorImg.addEventListener("tap", function() {
+		//从相册选取图片
+		plus.gallery.pick(
+			function(picPath) {			
+				console.log(picPath);
+				avatorImg.setAttribute("src",picPath);
+			},
+			function(e) { //执行失败
+				console.log(e);
+			}, {
+				filter: "image",
+				multiple: false //多选
+			}
+		)
+	});
+	
+	
+</script>

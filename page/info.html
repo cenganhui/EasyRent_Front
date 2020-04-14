@@ -1,0 +1,234 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		<div class="mui-content">
+			<!--头像-->
+			<div style="text-align: center;">
+				<img id="avatorImg" height="200px" width="200px" src="../image/phone.jpg" />
+			</div>
+			<!--信息列表-->
+			<ul id="infoUl" class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<div>
+						用户名:
+					</div>
+					<div id="userNameDiv" style="margin-right: 0;text-align: right;">
+						
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						昵称:
+					</div>
+					<div id="nickNameDiv" style="margin-right: 0;text-align: right;">
+						
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						电话:
+					</div>
+					<div id="phoneDiv" style="margin-right: 0;text-align: right;">
+						
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						邮箱:
+					</div>
+					<div id="emailDiv" style="margin-right: 0;text-align: right;">
+						
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						性别:
+					</div>
+					<div id="genderDiv" style="margin-right: 0;text-align: right;">
+						
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						校区:
+					</div>
+					<div id="campusDiv" style="margin-right: 0;text-align: right;">
+						
+					</div>
+				</li>
+			</ul>
+			<!--个人相关-->
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a href="order.html" class="mui-navigate-right">
+						全部订单
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="favority.html" class="mui-navigate-right">
+						我的收藏
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="info_change.html" class="mui-navigate-right">
+						修改个人信息
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="info_change_pw.html" class="mui-navigate-right">
+						修改密码
+					</a>
+				</li>
+			</ul>
+		</div>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
+<script src="../js/er.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>
+<script type="text/javascript">
+	window.addEventListener('refresh', function(e) {  
+		console.log("回调刷新");
+	    location.reload();   
+	    //逻辑处理
+	})
+	//更新个人信息
+	jQuery("#userNameDiv").html(window.localStorage.getItem("uname"));
+	jQuery("#nickNameDiv").html(window.localStorage.getItem("nickName"));
+	jQuery("#phoneDiv").html(window.localStorage.getItem("phone"));
+	jQuery("#emailDiv").html(window.localStorage.getItem("email"));
+	if(window.localStorage.getItem("gender") == 0){
+		jQuery("#genderDiv").html("男");
+	}
+	else{
+		jQuery("#genderDiv").html("女");
+	}
+	if(window.localStorage.getItem("campus") == 0){
+		jQuery("#campusDiv").html("南海校区");
+	}
+	else if(window.localStorage.getItem("campus") == 1){
+		jQuery("#campusDiv").html("大学城校区");
+	}
+	else{
+		jQuery("#campusDiv").html("石牌校区");
+	}
+	
+	mui.plusReady(function(){
+		//是否存有token
+		var flag = false;
+		if(window.localStorage.getItem("token")!=null){
+			flag = true;
+		}
+		//若有，则请求获取个人信息
+		if(flag){
+			jQuery.ajax({
+				method : "GET",
+				url : getUrl() + "/api/v1/user",
+				contentType : "application/json;charset=utf-8",
+				//data : JSON.stringify(data),
+				headers : {
+					"Authorization" : window.localStorage.getItem("token")
+				},
+				xhrFields : {
+					withCredentials : true
+				},
+				success : function(result){
+					
+					console.log("code:"+result.code+" msg:"+result.msg);
+					if(result.code == 200){
+						console.log("用户信息获取成功");
+						var user = result.data.user;
+						//个人信息保存
+						window.localStorage.setItem("uid",user.uid);
+						window.localStorage.setItem("uname",user.uname);
+						window.localStorage.setItem("nickName",user.nickName);
+						window.localStorage.setItem("avatar",user.avatar);
+						window.localStorage.setItem("phone",user.phone);
+						window.localStorage.setItem("email",user.email);
+						window.localStorage.setItem("gender",user.gender);
+						window.localStorage.setItem("campus",user.campus);
+						//console.log("userName:"+user.uname);
+						jQuery("#userNameDiv").html(user.uname);
+						jQuery("#nickNameDiv").html(user.nickName);
+						jQuery("#phoneDiv").html(user.phone);
+						jQuery("#emailDiv").html(user.email);
+						if(user.gender == 0){
+							jQuery("#genderDiv").html("男");
+						}
+						else{
+							jQuery("#genderDiv").html("女");
+						}
+						if(user.campus == 0){
+							jQuery("#campusDiv").html("南海校区");
+						}
+						else if(user.campus == 1){
+							jQuery("#campusDiv").html("大学城校区");
+						}
+						else{
+							jQuery("#campusDiv").html("石牌校区");
+						}
+						
+					}
+					else{
+						alert("其他错误！");
+					}
+				},
+				error : function(e){
+					console.log(e.status);
+					console.log(e.responseText);
+				}
+			});
+		}
+		else{
+			alert("登录信息过期！");
+		}
+		
+		
+	});
+	
+	
+	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	mui(".mui-table-view").on('tap', 'a', function(e) {
+		//获取到a中的href属性，对应到子页面的id
+		alert(this.getAttribute("href"));
+		var tagPage = this.getAttribute("href");
+		//打开一个新页面
+		mui.openWindow({
+			url: tagPage,
+			id: tagPage,
+			styles: {
+
+			},
+			extras: {
+
+			},
+			show: {
+				autoShow: true, //页面loaded事件发生后自动显示，默认为true
+				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			waiting: {
+				autoShow: true, //自动显示等待框，默认为true
+				title: '正在加载...', //等待对话框上显示的提示内容
+				options: {
+					//width
+					//height
+				}
+			}
+		});
+	});
+</script>

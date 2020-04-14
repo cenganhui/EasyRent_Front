@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		<div class="mui-content">
+			<!--头像-->
+			<div style="text-align: center;">
+				<img id="avatorImg" height="200px" width="200px" src="../image/phone.jpg" />
+			</div>
+			<!--信息列表-->
+			<ul id="infoUl" class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<div>
+						用户名:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						cgh01
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						昵称:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						用户1
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						电话:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						1231231234
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						邮箱:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						cgh@qq.com
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div>
+						校区:
+					</div>
+					<div style="margin-right: 0;text-align: right;">
+						南海校区
+					</div>
+				</li>
+			</ul>
+			<!--个人相关-->
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a href="order.html" class="mui-navigate-right">
+						全部订单
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="favority.html" class="mui-navigate-right">
+						我的收藏
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="info_change.html" class="mui-navigate-right">
+						修改个人信息
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="info_change_pw.html" class="mui-navigate-right">
+						修改密码
+					</a>
+				</li>
+			</ul>
+		</div>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>
+<script type="text/javascript">
+	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	mui(".mui-table-view").on('tap', 'a', function(e) {
+		//获取到a中的href属性，对应到子页面的id
+		alert(this.getAttribute("href"));
+		var tagPage = this.getAttribute("href");
+		//打开一个新聊天页面
+		mui.openWindow({
+			url: tagPage,
+			id: tagPage,
+			styles: {
+
+			},
+			extras: {
+
+			},
+			show: {
+				autoShow: true, //页面loaded事件发生后自动显示，默认为true
+				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			waiting: {
+				autoShow: true, //自动显示等待框，默认为true
+				title: '正在加载...', //等待对话框上显示的提示内容
+				options: {
+					//width
+					//height
+				}
+			}
+		});
+	});
+</script>

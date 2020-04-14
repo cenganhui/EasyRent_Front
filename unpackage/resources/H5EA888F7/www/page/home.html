@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style type="text/css">
+			.mui-content>.mui-table-view:first-child {
+				margin-top: -1px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+
+				<!--图片轮播-->
+				<div id="slider" class="mui-slider">
+					<div class="mui-slider-group mui-slider-loop">
+						<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<a href="#">
+								<img src="../image/fish.jpg">
+							</a>
+						</div>
+						<!-- 第一张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/taobao.jpg">
+							</a>
+						</div>
+						<!-- 第二张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/fish.jpg">
+							</a>
+						</div>
+						<!-- 第三张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/taobao.jpg">
+							</a>
+						</div>
+						<!-- 第四张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/fish.jpg">
+							</a>
+						</div>
+						<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<a href="#">
+								<img src="../image/taobao.jpg">
+							</a>
+						</div>
+					</div>
+					<div class="mui-slider-indicator">
+						<div class="mui-indicator mui-active"></div>
+						<div class="mui-indicator"></div>
+						<div class="mui-indicator"></div>
+						<div class="mui-indicator"></div>
+					</div>
+				</div>
+				
+				<!--搜索框-->
+				<div class="mui-input-row mui-search" style="height: 35px;">
+					<input type="search" class="mui-input-clear" placeholder=""style="35px">
+				</div>
+
+				<!--商品数据列表-->
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media">
+						<a href="home_detail.html">
+							<img class="mui-media-object mui-pull-left" src="../image/phone.jpg">
+							<div class="mui-media-body">
+								商品1
+								<p class="mui-ellipsis">这是商品1的详情。</p>
+								<p class="mui-ellipsis">6645</p>
+							</div>
+						</a>
+					</li>
+				</ul>
+
+			</div>
+		</div>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	mui.init({
+		pullRefresh: {
+			container: '#pullrefresh',
+			down: {
+				style: 'circle',
+				callback: pulldownRefresh
+			},
+			up: {
+				auto: true,
+				contentrefresh: '正在加载...',
+				callback: pullupRefresh
+			}
+		}
+	});
+
+	/**
+	 * 上拉加载
+	 */
+	function pullupRefresh() {
+		setTimeout(function() {
+			mui('#pullrefresh').pullRefresh().endPullupToRefresh();
+		}, 1500);
+	}
+
+	/**
+	 * 下拉刷新具体业务实现
+	 */
+	function pulldownRefresh() {
+		setTimeout(function() {
+			var table = document.querySelector(".mui-table-view");
+			for(var i = 0; i < 3; i++) {
+				var li = document.createElement("li");
+				li.className = "mui-table-view-cell mui-media";
+				var str = "";
+				str += "<a href='home_detail.html'>";
+				str += "<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
+				str += "<div class='mui-media-body'>";
+				str += "商品2";
+				str += "<p class='mui-ellipsis'>这是商品2的详情。</p>";
+				str += "<p class='mui-ellipsis'>669</p>";
+				str += "</div>";
+				str += "</a>";
+
+				li.innerHTML = str;
+				table.insertBefore(li, table.firstChild);
+			}
+
+			mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+			//mui.toast("为你推荐了5篇文章");
+		}, 1500);
+	}
+
+	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	mui(".mui-table-view").on('tap', 'a', function(e) {
+		//获取到a中的href属性，对应到子页面的id
+		alert(this.getAttribute("href"));
+		var tagPage = this.getAttribute("href");
+		//打开一个新聊天页面
+		mui.openWindow({
+			url: "home_detail.html",
+			id: "home_detail.html",
+			styles: {
+
+			},
+			extras: {
+
+			},
+			show: {
+				autoShow: true, //页面loaded事件发生后自动显示，默认为true
+				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			waiting: {
+				autoShow: true, //自动显示等待框，默认为true
+				title: '正在加载...', //等待对话框上显示的提示内容
+				options: {
+					//width
+					//height
+				}
+			}
+		});
+	});
+</script>

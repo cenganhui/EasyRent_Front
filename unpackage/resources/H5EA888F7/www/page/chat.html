@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<!--聊天页面用户列表-->
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell mui-media">
+				<a href="javascript:;" title="用户1">
+					<img class="mui-media-object mui-pull-left" src="http://placehold.it/40x30">
+					<div class="mui-media-body">
+						用户1
+						<p class="mui-ellipsis">能和心爱的人一起睡觉，是件幸福的事情；可是，打呼噜怎么办？</p>
+					</div>
+				</a>
+			</li>
+			<li class="mui-table-view-cell mui-media">
+				<a href="javascript:;" title="用户2">
+					<img class="mui-media-object mui-pull-left" src="http://placehold.it/40x30">
+					<div class="mui-media-body">
+						用户2
+						<p class="mui-ellipsis">想要这样一间小木屋，夏天挫冰吃瓜，冬天围炉取暖.</p>
+					</div>
+				</a>
+			</li>
+			<li class="mui-table-view-cell mui-media">
+				<a href="javascript:;" title="用户3">
+					<img class="mui-media-object mui-pull-left" src="http://placehold.it/40x30">
+					<div class="mui-media-body">
+						用户3
+						<p class="mui-ellipsis">烤炉模式的城，到黄昏，如同打翻的调色盘一般.</p>
+					</div>
+				</a>
+			</li>
+		</ul>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>
+<script type="text/javascript">
+	mui(".mui-table-view-cell").on("tap", "a", function(e) {
+		var title = this.getAttribute("title");
+		//打开一个新聊天页面
+		mui.openWindow({
+			url: "chat_message.html",
+			id: "chat_message.html",
+			styles: {
+
+			},
+			extras: {
+				title: title
+			},
+			show: {
+				autoShow: true, //页面loaded事件发生后自动显示，默认为true
+				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			waiting: {
+				autoShow: true, //自动显示等待框，默认为true
+				title: '正在加载...', //等待对话框上显示的提示内容
+				options: {
+					//width
+					//height
+				}
+			}
+		});
+
+	});
+</script>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/main.css" />
+	</head>
+
+	<body>
+		<!--顶部-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">订单</h1>
+		</header>
+		
+		<div class="mui-content">
+			<!--数据列表-->
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media">
+					<a href="order_detail.html">
+						<img class="mui-media-object mui-pull-left" src="../image/phone.jpg">
+						<div class="mui-media-body">
+							商品1
+							<p class="mui-ellipsis">这是商品1的详情。</p>
+							<p class="mui-ellipsis">6645</p>
+						</div>
+					</a>
+					<button id="isFavorityBtn" type="button" class="mui-btn mui-btn-blue">
+						<div id="isFavorityDiv">
+							已完成
+						</div>
+					</button>
+				</li>
+			</ul>
+		</div>
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>
+<script type="text/javascript">
+	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	mui(".mui-table-view").on('tap', 'a', function(e) {
+		//获取到a中的href属性，对应到子页面的id
+		alert(this.getAttribute("href"));
+		var tagPage = this.getAttribute("href");
+		//打开一个新订单详情页面
+		mui.openWindow({
+			url: tagPage,
+			id: tagPage,
+			styles: {
+
+			},
+			extras: {
+
+			},
+			show: {
+				autoShow: true, //页面loaded事件发生后自动显示，默认为true
+				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			waiting: {
+				autoShow: true, //自动显示等待框，默认为true
+				title: '正在加载...', //等待对话框上显示的提示内容
+				options: {
+					//width
+					//height
+				}
+			}
+		});
+	});
+</script>

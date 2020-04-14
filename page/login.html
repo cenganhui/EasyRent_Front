@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/main.css" />
+	</head>
+
+	<body>
+		<!-- 顶部 -->
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">登录</h1>
+		</header>
+
+		<div class="mui-content">
+			<form class="mui-input-group">
+				<div class="mui-input-row">
+					<label>用户名</label>
+					<input id="userNameInput" type="text" class="mui-input-clear" placeholder="请输入用户名">
+				</div>
+				<div class="mui-input-row">
+					<label>密码</label>
+					<input id="pwdInput" type="password" class="mui-input-password" placeholder="请输入密码">
+				</div>
+				<div class="mui-button-row">
+					<button id="registerBtn" type="button" class="mui-btn mui-btn-green">注册</button>
+					<button id="loginBtn" type="button" class="mui-btn mui-btn-blue">登录</button>
+				</div>
+			</form>
+		</div>
+	</body>
+
+</html>
+
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
+<script src="../js/er.js"></script>
+<script type="text/javascript">
+	mui.init();
+
+	//注册按钮绑定事件
+	var registerBtn = document.getElementById("registerBtn");
+	registerBtn.addEventListener("tap", function() {
+		//打开一个注册页面
+		mui.openWindow({
+			url: "register.html",
+			id: "register.html",
+			styles: {
+
+			},
+			extras: {
+				//
+			},
+			show: {
+				autoShow: true, //页面loaded事件发生后自动显示，默认为true
+				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			waiting: {
+				autoShow: true, //自动显示等待框，默认为true
+				title: '正在加载...', //等待对话框上显示的提示内容
+				options: {
+					//width
+					//height
+				}
+			}
+		});
+		
+	});
+	
+	
+	//登录按钮绑定事件
+	var loginBtn = document.getElementById("loginBtn");
+	loginBtn.addEventListener("tap",function(){
+		var userName = jQuery("#userNameInput").val();
+		var pwd = jQuery("#pwdInput").val();
+		var data = {
+			"uname" : userName,
+			"upwd" : pwd
+		}
+		var flag = jsonHasEmpty(data);
+		//判断输入信息是否为空
+		if(flag){
+			jQuery.ajax({
+				method : "POST",
+				url : getUrl() + "/front/login",
+				contentType : "application/json;charset=utf-8",
+				data : JSON.stringify(data),
+				xhrFields : {
+					withCredentials : true
+				},
+				success : function(result){
+					
+					console.log("code:"+result.code+" msg:"+result.msg);
+					if(result.code == 200){
+						window.localStorage.setItem("token",result.data.token);
+						console.log("login:"+result.data);
+						mui.toast("登录成功！");
+						//打开首页（index.html）
+						mui.openWindow({
+							url:"../index.html",
+							id:"../index.html",
+							styles:{
+								
+							},
+							extras:{
+								
+							},
+							show:{
+								autoShow:true,
+								aniShow:"slide-in-right",
+								duration:100
+							},
+							waiting:{
+								autoShow:true,
+								title:"正在加载...",
+								options:{
+									
+								}
+							}
+						});
+						
+						
+					}
+					else if(result.code == 201){
+						mui.toast("用户名或密码为空！");
+					}
+					else if(result.code == 203){
+						mui.toast("密码错误！");
+					}
+					else{
+						mui.toast("其他错误！");
+					}
+				},
+				error : function(e){
+					console.log(e.status);
+					console.log(e.responseText);
+				}
+			});
+		}
+		else{
+			alert("用户名或密码为空！");
+		}
+		
+		
+		
+		// mui.openWindow({
+		// 	url:"../index.html",
+		// 	id:"../index.html",
+		// 	styles:{
+				
+		// 	},
+		// 	extras:{
+				
+		// 	},
+		// 	show:{
+		// 		autoShow:true,
+		// 		aniShow:"slide-in-right",
+		// 		duration:100
+		// 	},
+		// 	waiting:{
+		// 		autoShow:true,
+		// 		title:"正在加载...",
+		// 		options:{
+		// 			
+		// 		}
+		// 	}
+		// });
+	});
+</script>

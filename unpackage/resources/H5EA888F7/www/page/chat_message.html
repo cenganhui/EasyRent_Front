@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/main.css" />
+	</head>
+
+	<body>
+		<!--顶部-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">xxxx</h1>
+		</header>
+
+		<!--<div class="mui-content">
+			<div id="message">
+				聊天消息
+			</div>
+
+			<!--调用相机按钮-->
+		<!--<button type="button" id="galleryBtn" class="mui-btn mui-btn-blue">相册</button>-->
+		<!--调用摄像头按钮-->
+		<!--<button type="button" id="cameraBtn" class="mui-btn mui-btn-green">摄像头</button>
+		</div>-->
+
+		<div id="msgDiv" class="mui-content">
+
+			<br />
+			<div>
+				<div style="margin-right: 50px;background: wheat;">
+					拉克的减肥啦好可怜学者接触是卡路径真可怜撒旦教恢复控件来撒会反馈拉三等奖福利卡
+				</div>
+			</div>
+
+			<br />
+			<div style="text-align: right;margin-left: 50px;background: azure;">
+				<div style="text-align: left;">
+					你才是傻逼你才是傻逼你才是傻逼你才是傻逼
+				</div>
+			</div>
+
+		</div>
+
+		<table class="mui-bar mui-bar-tab">
+			<tr>
+				<td style="text-align: center;width: 15%;">
+					<button id="galleryBtn" type="button" class="mui-btn mui-btn-blue" style="margin-bottom: 14px;height: 40px;">相册</button>
+				</td>
+				<td style="width: 70%;">
+					<input id="textInput" type="text" style="margin-bottom: 0px;height: 40px;" />
+				</td>
+
+				<td style="text-align: center;width: 15%;">
+					<button id="sendTextBtn" type="button" class="mui-btn mui-btn-blue" style="margin-bottom: 14px;height: 40px;">发送</button>
+				</td>
+			</tr>
+		</table>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>
+<script type="text/javascript">
+	mui.plusReady(function() {
+//		var cw = plus.webview.currentWebview();
+//		var titleName = cw.title;
+//		var h1 = document.querySelector(".mui-title");
+//		h1.innerText = titleName;
+	})
+
+	//发送消息
+	var sendTextBtn = document.getElementById("sendTextBtn");
+	sendTextBtn.addEventListener("tap", function() {
+		//获取输入框
+		var textInput = document.getElementById("textInput");
+		//alert(textInput.value);
+		var str = "";
+		str += "<br />";
+		str += "<div>";
+		str += "<div style='margin-right: 50px;background: wheat;'>";
+		str += textInput.value;
+		str += "</div>";
+		str += "</div>";
+		//输入框置空
+		textInput.value = "";
+		//获取msgDiv
+		var msgDiv = document.getElementById("msgDiv");
+		//追加内容进msgDiv
+		msgDiv.innerHTML += str;
+
+	});
+	
+	//为相册按钮绑定事件
+	var galleryBtn = document.getElementById("galleryBtn");
+	galleryBtn.addEventListener("tap", function() {
+		//从相册选取图片
+		plus.gallery.pick(
+			function(picPath) {
+				alert(picPath);
+				console.log(picPath);
+			},
+			function(e) { //执行失败
+				console.log(e);
+			}, {
+				filter: "image",
+				multiple: false //多选
+			}
+		)
+	});
+
+	//为相册按钮绑定事件
+	//	var messageDiv = document.getElementById("message");
+	//	var galleryBtn = document.getElementById("galleryBtn");
+	//	galleryBtn.addEventListener("tap", function() {
+	//		//从相册选取图片
+	//		plus.gallery.pick(
+	//			function(picPath) {
+	//				var img = "";
+	//				for(var i in picPath.files) {
+	//					img += "<img width=100 height=100 src=" + picPath.files[i] + ">";
+	//				}
+	//				messageDiv.innerHTML = img;
+	//
+	//			},
+	//			function(e) { //执行失败
+	//				console.log(e);
+	//			}, {
+	//				filter: "image",
+	//				multiple: true //多选
+	//			}
+	//		)
+	//
+	//	})
+
+	//为摄像头按钮绑定事件
+	//	var cameraBtn = document.getElementById("cameraBtn");
+	//	cameraBtn.addEventListener("tap", function() {
+	//		//获取到主摄像头，1是主，2是副
+	//		var cm = plus.camera.getCamera(1);
+	//		cm.captureImage(
+	//			function(Path) {
+	//				var picPath = "file://" + plus.io.convertLocalFileSystemURL(Path);
+	//				var img = "<img width=100 height=100 src=" + picPath + ">";
+	//				messageDiv.innerHTML = img;
+	//			}
+	//		)
+	//	})
+</script>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/feedback-page.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+	</head>
+
+	<body>
+
+		<div id="feedback" class="mui-page feedback">
+			<div class="mui-page-content">
+				<p>标题</p>
+				<div class="mui-input-row">
+					<input id='title' type="text" class="mui-input-clear  contact" placeholder="标题..." />
+				</div>
+				<p>详情</p>
+				<div class="row mui-input-row">
+					<textarea id='detail' class="mui-input-clear question" placeholder="商品详情..."></textarea>
+				</div>
+			
+				<div style="margin-top: 10px;text-align: center;">
+					<!--押金-->
+					押金：
+					<div class="mui-numbox" data-numbox-step='1'>
+						<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+						<input id="deposit" class="mui-input-numbox" type="number" />
+						<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+					</div>
+
+					<!--租金-->
+					租金：
+					<div class="mui-numbox" data-numbox-step='1'>
+						<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+						<input id="rent" class="mui-input-numbox" type="number" />
+						<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+					</div>
+				</div>
+
+				<p>图片</p>
+				<div id='imageList' class="row image-list">
+
+				</div>
+
+				<!--调用相机按钮-->
+				<button id='galleryBtn' type="button" class="mui-btn mui-btn-blue" style="margin-top: 6px;">相册</button>
+
+				<!--出租时间-->
+				<button id='rentTimeBtn' type="button" class="mui-btn mui-btn-yellow" style="margin-top: 6px;">
+					<div id="rentTimeDiv">
+						出租时间
+					</div>
+				</button>
+				<!--归还时间-->
+				<button id='returnTimeBtn' type="button" class="mui-btn mui-btn-yellow" style="margin-top: 6px;">
+					<div id="returnTimeDiv">
+						归还时间
+					</div>
+				</button>
+
+				<!--发布按钮-->
+				<button id='submit' type="button" class="mui-btn mui-btn-green" style="margin-top: 6px;">发布</button>
+			</div>
+		</div>
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<!--<script src="../js/feedback-page.js"></script>-->
+<script src="../js/mui.picker.min.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>
+<script type="text/javascript">
+	//为相册按钮绑定事件
+	var imageList = document.getElementById("imageList");
+	var galleryBtn = document.getElementById("galleryBtn");
+	galleryBtn.addEventListener("tap", function() {
+		//从相册选取图片
+		plus.gallery.pick(
+			function(picPath) {
+				var img = "";
+				//alert(picPath.files.length);			
+				if(picPath.files.length > 3) {
+					alert("最多选择3张图片！");
+					return;
+				}
+				for(var i in picPath.files) {
+					img += "<img width=100 height=100 src=" + picPath.files[i] + ">";
+				}
+				imageList.innerHTML = img;
+
+			},
+			function(e) { //执行失败
+				console(e);
+			}, {
+				filter: "image",
+				multiple: true //多选
+			}
+		)
+
+	})
+
+	//日期选择
+	var rentTimeBtn = document.querySelector("#rentTimeBtn");
+	var rentTimeDiv = document.querySelector("#rentTimeDiv");
+
+	var returnTimeBtn = document.querySelector("#returnTimeBtn");
+	var returnTimeDiv = document.querySelector("#returnTimeDiv");
+	var dtPicker = new mui.DtPicker({
+		type: "date",
+		beginDate: new Date(2000, 1, 1),
+		endDate: new Date(2050, 12, 31)
+	});
+
+	//出租时间选择按钮事件
+	rentTimeBtn.addEventListener("tap", function() {
+		dtPicker.show(function(result) {
+			//console.log(result.value);
+			console.log("出租时间：" + result.y.value + "-" + result.m.value + "-" + result.d.value);
+			var str = "出租时间 " + result.y.value + "-" + result.m.value + "-" + result.d.value;
+			rentTimeDiv.innerHTML = str;
+
+		});
+	}, false);
+	//归还时间选择按钮事件
+	returnTimeBtn.addEventListener("tap", function() {
+		dtPicker.show(function(result) {
+			console.log("归还时间：" + result.y.value + "-" + result.m.value + "-" + result.d.value);
+			var str = "归还时间 " + result.y.value + "-" + result.m.value + "-" + result.d.value;
+			returnTimeDiv.innerHTML = str;
+		});
+	});
+</script>

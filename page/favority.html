@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/main.css" />
+	</head>
+
+	<body>
+		<!--顶部-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">收藏夹</h1>
+		</header>
+		
+		
+		<div class="mui-content">
+
+			<!--收藏数据列表-->
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media">
+					<a href="home_detail.html">
+						<img class="mui-media-object mui-pull-left" src="../image/phone.jpg">
+						<div class="mui-media-body">
+							商品1
+							<p class="mui-ellipsis">这是商品1的详情。</p>
+							<p class="mui-ellipsis">6645</p>
+						</div>
+					</a>
+					<!--取消收藏按钮-->
+					<button id="isFavorityBtn" type="button" class="mui-btn mui-btn-red">
+						<div id="isFavorityDiv">
+							取消收藏
+						</div>
+					</button>
+				</li>
+			</ul>
+
+		</div>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js"></script>
+<script type="text/javascript">
+	mui.init()
+</script>

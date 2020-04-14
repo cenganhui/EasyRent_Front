@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+	</head>
+
+	<body>
+		<!--顶部-->
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">轻松租</h1>
+		</header>
+
+		<!--底部导航-->
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" href="page/home.html">
+				<span class="mui-icon mui-icon-weixin"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a class="mui-tab-item" href="page/class.html">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">分类</span>
+			</a>
+			<a class="mui-tab-item" href="page/publish.html">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">发布</span>
+			</a>
+			<a class="mui-tab-item" href="page/chat.html">
+				<span class="mui-icon mui-icon-paperplane"></span>
+				<span class="mui-tab-label">消息</span>
+			</a>
+			<a class="mui-tab-item" href="page/info.html">
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+	</body>
+
+</html>
+<script type="text/javascript" charset="utf-8">
+	mui.init({
+		//监听Android手机的back按键
+		keyEventBind: {
+			backbutton: true, //Boolean(默认true)关闭back按键监听
+		}
+	});
+</script>
+
+<script type="text/javascript">
+	//子页面数组
+	var subPages = ['page/home.html', 'page/class.html', 'page/publish.html', 'page/chat.html', 'page/info.html'];
+	//子页面打开样式风格
+	var subPageStyle = {
+		top: '44px', //顶部保留
+		bottom: '50px' //底部保留
+	};
+	mui.plusReady(function() {
+		//获取父窗口
+		var openView = plus.webview.currentWebview().opener();
+		//判断是否存在父窗口,存在则关闭（关闭登录页面）
+		if(openView) {
+			openView.hide();
+			openView.close();
+		};
+
+		//获取当前webview
+		var self = plus.webview.currentWebview();
+		for(var i = 0; i < subPages.length; i++) {
+			//创建webview
+			var sub = plus.webview.create(subPages[i], subPages[i], subPageStyle);
+			//隐藏
+			sub.hide();
+			//把子页面追加到当前webview
+			self.append(sub);
+		}
+		//显示第一个子页面
+		plus.webview.show(subPages[0]);
+	})
+	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	mui(".mui-bar-tab").on('tap', 'a', function(e) {
+		//获取到a中的href属性，对应到子页面的id
+		var tagPage = this.getAttribute("href");
+		//显示子页面，（id，效果，执行时间）
+		plus.webview.show(tagPage, "fade-in", 100);
+	})
+
+	//监听back按键
+	var clickNum = 0;
+	mui.back = function(event) {
+		clickNum++;
+		if(clickNum > 1) {
+			plus.runtime.quit();
+		} else {
+			mui.toast("再按一次退出应用");
+		}
+		setTimeout(function() {
+			clickNum = 0
+		}, 2000);
+		return false;
+	};
+</script>

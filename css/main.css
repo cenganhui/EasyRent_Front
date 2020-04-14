@@ -1,0 +1,13 @@
+.mui-bar-nav{
+	background-color: #000000;
+}
+.mui-title{
+	color: white;
+}
+.mui-active .mui-tab-label,.mui-active .mui-icon{
+	color: #44bf19;
+}
+.mui-plus-pullrefresh .mui-scroll {
+    position: absolute;
+    width: 100%;
+}

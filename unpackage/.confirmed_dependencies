@@ -1,0 +1,51 @@
+{
+  "index.html": {
+    "resources": [
+      "page/home.html",
+      "page/publish.html"
+    ],
+    "refer": [
+      "page/home.html",
+      "page/chat.html",
+      "page/class.html",
+      "page/info.html",
+      "page/publish.html"
+    ]
+  },
+  "page/chat.html": {
+    "refer": [
+      "page/chat_message.html"
+    ]
+  },
+  "page/home.html": {
+    "refer": [
+      "page/home_detail.html"
+    ]
+  },
+  "page/info.html": {
+    "refer": [
+      "page/favority.html",
+      "page/changeInfo.html",
+      "page/info_change.html",
+      "page/info_change_pw.html",
+      "page/order.html"
+    ]
+  },
+  "page/order.html": {
+    "refer": [
+      "page/order_detail.html"
+    ]
+  },
+  "page/home_detail.html": {
+    "refer": [
+      "page/chat_message.html"
+    ]
+  },
+  "page/login.html": {
+    "refer": [
+      "page/register.html",
+      "page/index.html",
+      "index.html"
+    ]
+  }
+}

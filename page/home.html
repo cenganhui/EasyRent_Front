@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<style type="text/css">
+			.mui-content>.mui-table-view:first-child {
+				margin-top: -1px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+
+				<!--图片轮播-->
+				<div id="slider" class="mui-slider">
+					<div class="mui-slider-group mui-slider-loop">
+						<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<a href="#">
+								<img src="../image/fish.jpg">
+							</a>
+						</div>
+						<!-- 第一张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/taobao.jpg">
+							</a>
+						</div>
+						<!-- 第二张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/fish.jpg">
+							</a>
+						</div>
+						<!-- 第三张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/taobao.jpg">
+							</a>
+						</div>
+						<!-- 第四张 -->
+						<div class="mui-slider-item">
+							<a href="#">
+								<img src="../image/fish.jpg">
+							</a>
+						</div>
+						<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+						<div class="mui-slider-item mui-slider-item-duplicate">
+							<a href="#">
+								<img src="../image/taobao.jpg">
+							</a>
+						</div>
+					</div>
+					<div class="mui-slider-indicator">
+						<div class="mui-indicator mui-active"></div>
+						<div class="mui-indicator"></div>
+						<div class="mui-indicator"></div>
+						<div class="mui-indicator"></div>
+					</div>
+				</div>
+				
+				<!--搜索框-->
+				<div class="mui-input-row mui-search" style="height: 35px;">
+					<input id="searchInput" type="search" class="mui-input-clear" value="" placeholder="">
+				</div>
+
+				<!--商品数据列表-->
+				<ul id="commodityUl" class="mui-table-view">
+					<!-- <li id="cid" class="mui-table-view-cell mui-media">
+						<a href="home_detail.html">
+							<img class="mui-media-object mui-pull-left" src="../image/phone.jpg">
+							<div class="mui-media-body">
+								商品1
+								<p class="mui-ellipsis">这是商品1的详情。</p>
+								<p class="mui-ellipsis">6645</p>
+							</div>
+						</a>
+					</li> -->
+				</ul>
+
+			</div>
+		</div>
+
+	</body>
+
+</html>
+<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/er.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
+<script>
+	mui.init({
+		pullRefresh: {
+			container: '#pullrefresh',
+			down: {
+				auto: true,
+				style: 'circle',
+				callback: pulldownRefresh
+			},
+			up: {
+				//auto: true,
+				contentrefresh : "正在加载...",
+				contentnomore : "没有更多数据了",
+				callback: pullupRefresh
+			}
+		}
+	});
+
+	/**
+	 * 上拉加载商品列表，根据输入框内容（title）进行查询
+	 */
+	function loadCommodity(title){
+		//获取商品页号和每次加载数量
+		var cpno = window.localStorage.getItem("cpno");
+		var cpsize = window.localStorage.getItem("cpsize");
+		//GET方法url
+		var url = getUrl() + "/api/v1/commodity?pno=" + cpno + "&psize=" + cpsize + "&title=" + title;
+		jQuery.ajax({
+			method : "GET",
+			url : url,
+			contentType : "application/json;charset=utf-8",
+			//data : JSON.stringify(data),
+			headers : {
+				"Authorization" : window.localStorage.getItem("token")
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(result){
+				
+				console.log("code:"+result.code+" msg:"+result.msg);
+				if(result.code == 200){
+					console.log("商品列表获取成功");
+					//获取商品列表
+					var commodityList = result.data.commodityList;
+					//获取返回的商品个数
+					var n = commodityList.length;
+					console.log("length="+n);
+					//获取ul
+					var commodityUl = document.getElementById("commodityUl");
+					for(var i = 0; i < n; i++ ){
+						var commodity = commodityList[i];
+						var li = document.createElement("li");
+						li.className = "mui-table-view-cell mui-media";
+						var str = "";
+						
+						str += "<li id=" + commodity.commodity.cid + " class='mui-table-view-cell mui-media'>";
+						str += 	"<a href='home_detail.html'>";
+						str +=		"<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
+						str +=		"<div class='mui-media-body'>";
+						str +=			commodity.commodity.title;
+						str +=			"<p class='mui-ellipsis'>" + commodity.commodity.detail + "</p>";
+						str +=			"<p class='mui-ellipsis'>¥" + commodity.commodity.rent + "</p>";
+						str +=		"</div>";
+						str +=	"</a>";
+						str += "</li>";
+						
+						li.innerHTML = str;
+						commodityUl.appendChild(li);
+						
+					}
+					//页号+1
+					window.localStorage.setItem("cpno",parseInt(cpno)+1);
+					console.log("查询后pno:"+window.localStorage.getItem("cpno"));
+				}
+				else{
+					alert("其他错误！");
+				}
+			},
+			error : function(e){
+				console.log(e.status);
+				console.log(e.responseText);
+			}
+		});
+		
+	}
+
+	/**
+	 * 上拉加载
+	 */
+	function pullupRefresh() {
+		setTimeout(function() {
+			var title = jQuery("#searchInput").val();
+			loadCommodity(title);		
+			mui('#pullrefresh').pullRefresh().endPullupToRefresh();			
+		}, 1500);
+	}
+
+	/**
+	 * 下拉刷新具体业务实现
+	 */
+	function pulldownRefresh() {
+		setTimeout(function() {
+			//初始化商品页号为1
+			window.localStorage.setItem("cpno",1);
+			//初始化搜索框内容
+			jQuery("#searchInput").val("");
+			//获取ul
+			var commodityUl = document.getElementById("commodityUl");
+			//初始化ul内容
+			commodityUl.innerHTML = "";
+			loadCommodity("");
+
+			// var table = document.querySelector(".mui-table-view");
+			// for(var i = 0; i < 3; i++) {
+			// 	var li = document.createElement("li");
+			// 	li.className = "mui-table-view-cell mui-media";
+			// 	var str = "";
+			// 	str += "<a href='home_detail.html'>";
+			// 	str += "<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
+			// 	str += "<div class='mui-media-body'>";
+			// 	str += "商品2";
+			// 	str += "<p class='mui-ellipsis'>这是商品2的详情。</p>";
+			// 	str += "<p class='mui-ellipsis'>669</p>";
+			// 	str += "</div>";
+			// 	str += "</a>";
+
+			// 	li.innerHTML = str;
+			// 	table.insertBefore(li, table.firstChild);
+			// }
+			mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+		}, 1500);
+	};
+	
+	//绑定搜索框
+	document.getElementById("searchInput").addEventListener("keypress",function(e){
+		//虚拟键盘回车
+		if(event.keyCode == "13"){
+			document.activeElement.blur();//收起虚拟键盘
+			//初始化页号
+			window.localStorage.setItem("cpno",1);
+			//获取搜索框内容
+			var title = jQuery("#searchInput").val();
+			var commodityUl = document.getElementById("commodityUl");
+			//置ul为空
+			commodityUl.innerHTML = "";
+			loadCommodity(title);
+			console.log("search:"+title);
+			
+			event.preventDefault(); // 阻止默认事件---阻止页面刷新
+		}
+	});
+
+	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	mui(".mui-table-view").on('tap', 'a', function(e) {
+		//获取到a中的href属性，对应到子页面的id
+		alert(this.getAttribute("href"));
+		var tagPage = this.getAttribute("href");
+		//打开一个新聊天页面
+		mui.openWindow({
+			url: "home_detail.html",
+			id: "home_detail.html",
+			styles: {
+
+			},
+			extras: {
+
+			},
+			show: {
+				autoShow: true, //页面loaded事件发生后自动显示，默认为true
+				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			waiting: {
+				autoShow: true, //自动显示等待框，默认为true
+				title: '正在加载...', //等待对话框上显示的提示内容
+				options: {
+					//width
+					//height
+				}
+			}
+		});
+	});
+</script>
