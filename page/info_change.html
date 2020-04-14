@@ -21,6 +21,7 @@
 			<div style="text-align: center;">
 				<img id="avatorImg" height="200px" width="200px" src="../image/phone.jpg" />
 			</div>
+			
 			<!--个人信息修改输入-->
 			<form class="mui-input-group">
 				<div class="mui-input-row">
@@ -76,8 +77,11 @@
 	});
 </script>
 <script type="text/javascript">
-
+	/**
+	 * 确认修改事件
+	 */
 	jQuery("#changeInfoBtn").click(function(){
+		//获取修改输入信息
 		var nickName = jQuery("#nickNameInput").val();
 		var email = jQuery("#emailInput").val();
 		var gender = parseInt(jQuery("#genderSelect").val());
@@ -115,40 +119,6 @@
 						window.localStorage.setItem("email",data.email);
 						window.localStorage.setItem("gender",data.gender);
 						window.localStorage.setItem("campus",data.campus);
-						
-						//获取父窗口（登录窗口）
-						//var openView = plus.webview.currentWebview().opener();
-						//var curView = plus.webview.currentWebview();
-						//判断是否存在父窗口,存在则关闭（关闭登录页面）
-						//openView.show();
-						//curView.hide();
-						//curView.close();
-						
-						//打开一个新聊天页面
-						// mui.openWindow({
-						// 	url: "../index.html",
-						// 	id: "../index.html",
-						// 	styles: {
-						
-						// 	},
-						// 	extras: {
-								
-						// 	},
-						// 	show: {
-						// 		autoShow: true, //页面loaded事件发生后自动显示，默认为true
-						// 		aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
-						// 		duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
-						// 	},
-						// 	waiting: {
-						// 		autoShow: true, //自动显示等待框，默认为true
-						// 		title: '正在加载...', //等待对话框上显示的提示内容
-						// 		options: {
-						// 			//width
-						// 			//height
-						// 		}
-						// 	}
-						// });
-						
 					}
 					else{
 						alert("其他错误！");
@@ -166,7 +136,9 @@
 		
 	});
 	
-	//为更换头像绑定事件
+	/**
+	 * 为更换头像绑定事件
+	 */
 	var avatorImg = document.getElementById("avatorImg");
 	avatorImg.addEventListener("tap", function() {
 		//从相册选取图片
@@ -179,7 +151,7 @@
 				console.log(e);
 			}, {
 				filter: "image",
-				multiple: false //多选
+				multiple: false //单选
 			}
 		)
 	});

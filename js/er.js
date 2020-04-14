@@ -13,3 +13,18 @@ function jsonHasEmpty(data){
 	}
 	return true;
 }
+//long转date，yyyy-MM-dd
+function longToDate1(longTime){
+	var dateTime = new Date(longTime);
+	return dateTime.getFullYear() + "-" + (dateTime.getMonth()+1) + "-" + dateTime.getDate();
+}
+//long转date，yyyy-MM-dd hh:mm:ss
+function longToDate2(longTime){
+	var dateTime = new Date(longTime);
+	return dateTime.getFullYear() + "-" + (dateTime.getMonth()+1) + "-" + dateTime.getDate() + " " + dateTime.getHours() + ":" + dateTime.getMinutes() + ":" + dateTime.getSeconds();
+}
+//date转long（13位）
+function dateToLong(dateTime){
+	var longTime = new Date(dateTime).getTime();
+	return longTime;
+}

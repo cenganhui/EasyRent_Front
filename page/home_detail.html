@@ -64,69 +64,69 @@
 					<div>
 						标题：
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						商品1
+					<div id="titleDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						详情：
 					</div>
-					<div style="margin-right: 0;">
-						这是是艾弗森的房间爱丽丝肯德基福利卡设计费立刻就爱上了咖啡拉丝机静安寺蝶恋蜂狂静安寺路口的减肥了卡斯接待来访框架啊凉快圣诞节了开发 就爱上了副科级拉 斯会计分录卡视角了副科级阿斯利康
+					<div id="detailDiv" style="margin-left: 20px;margin-right: 20px;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						押金:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						1000
+					<div id="depositDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						租金:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						200
+					<div id="rentDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						出租时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-4-1
+					<div id="rentalTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						归还时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-5-1
+					<div id="requestTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						发布时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-3-28
+					<div id="shelfTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 			</ul>
 			<!--联系发布者按钮-->
 			<button id="contactSellerBtn" type="button" class="mui-btn mui-btn-green mui-btn-block">
-				<div>
-					发布者：用户2
+				<div id="sellerDiv">
+					
 				</div>
 			</button>
 			<!--设置收藏按钮-->
-			<button type="button" class="mui-btn mui-btn-red mui-btn-block">收藏</button>
+			<button id="favoriteBtn" type="button" class="mui-btn mui-btn-red mui-btn-block">收藏</button>
 			<!--选择租用按钮-->
-			<button type="button" class="mui-btn mui-btn-blue mui-btn-block">立即租</button>
+			<button id="rentBtn" type="rentBtn" class="mui-btn mui-btn-blue mui-btn-block">立即租</button>
 
 		</div>
 
@@ -134,18 +134,126 @@
 
 </html>
 <script src="../js/mui.min.js"></script>
+<script src="../js/er.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
 <script type="text/javascript">
 	mui.init()
 </script>
 <script type="text/javascript">
+	/**
+	 * 商品详情页面初始化，获取商品详情信息
+	 */
 	mui.plusReady(function() {
-		//		var cw = plus.webview.currentWebview();
-		//		var titleName = cw.title;
-		//		var h1 = document.querySelector(".mui-title");
-		//		h1.innerText = titleName;
+		//传值获取点击的cid
+		var cid = plus.webview.currentWebview().cid;
+		//console.log("cid:"+cid);
+		//GET方法url
+		var url = getUrl() + "/api/v1/commodity_detail?cid=" + cid;
+		
+		jQuery.ajax({
+			method : "GET",
+			url : url,
+			contentType : "application/json;charset=utf-8",
+			//data : JSON.stringify(data),
+			headers : {
+				"Authorization" : window.localStorage.getItem("token")
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(result){
+				
+				console.log("code:"+result.code+" msg:"+result.msg);
+				if(result.code == 200){
+					//获取商品
+					var commodity = result.data.commodity;
+					//获取卖家昵称
+					var sellerNickName = result.data.nickName;
+					//console.log("商品信息获取成功" + JSON.stringify(commodity));
+					jQuery("#titleDiv").html(commodity.title);
+					jQuery("#detailDiv").html(commodity.detail);
+					jQuery("#depositDiv").html("¥ " + commodity.deposit);
+					jQuery("#rentDiv").html("¥ " + commodity.rent);
+					jQuery("#rentalTimeDiv").html(longToDate1(commodity.rentalTime));
+					jQuery("#requestTimeDiv").html(longToDate1(commodity.requestTime));
+					jQuery("#shelfTimeDiv").html(longToDate2(commodity.shelfTime));
+					jQuery("#sellerDiv").html("发布者：" + sellerNickName);
+					//判断商品是否被租并且是否是自己发布的，若被租，则锁定rentBtn
+					if(commodity.status == 0 && window.localStorage.getItem("uid") != commodity.userId){
+						var rentBtn = document.getElementById("rentBtn");
+						rentBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+						rentBtn.innerHTML = "已被租";
+						rentBtn.disabled = true;
+					}
+					//若商品是自己发布的，则锁定
+					if(window.localStorage.getItem("uid") == commodity.userId){
+						var rentBtn = document.getElementById("rentBtn");
+						rentBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+						rentBtn.disabled = true;
+					}
+				}
+				else{
+					alert("其他错误！");
+				}
+			},
+			error : function(e){
+				console.log(e.status);
+				console.log(e.responseText);
+			}
+		});
+		
+	})
+	
+	/**
+	 * 收藏按钮事件
+	 */
+	jQuery("#favoriteBtn").click(function(){
+		var cid = plus.webview.currentWebview().cid;
+		var data = {
+			"cid" : cid
+		}
+		jQuery.ajax({
+			method : "POST",
+			url : getUrl() + "/api/v1/favorite",
+			contentType : "application/json;charset=utf-8",
+			data : JSON.stringify(data),
+			headers : {
+				"Authorization" : window.localStorage.getItem("token")
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(result){
+				
+				console.log("code:"+result.code+" msg:"+result.msg);
+				if(result.code == 200){
+					console.log("收藏成功");
+					mui.toast("收藏成功！");
+				}
+				else if(result.code == 213){
+					mui.toast("已在收藏中");
+				}
+				else{
+					mui.toast("其他错误！");
+				}
+			},
+			error : function(e){
+				console.log(e.status);
+				console.log(e.responseText);
+			}
+		});
+	})
+	
+	/**
+	 * 立即租按钮事件
+	 */
+	jQuery("#rentBtn").click(function(){
+		mui.toast("被点击了");
 	})
 
-	//联系发布者按钮事件绑定
+	/**
+	 * 联系发布者按钮事件绑定
+	 */
 	var contactSellerBtn = document.getElementById("contactSellerBtn");
 	contactSellerBtn.addEventListener("tap", function() {
 		mui.openWindow({

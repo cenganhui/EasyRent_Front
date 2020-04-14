@@ -66,6 +66,7 @@
 					</div>
 				</li>
 			</ul>
+			
 			<!--个人相关-->
 			<ul class="mui-table-view">
 				<li class="mui-table-view-cell">
@@ -74,7 +75,7 @@
 					</a>
 				</li>
 				<li class="mui-table-view-cell">
-					<a href="favority.html" class="mui-navigate-right">
+					<a href="favorite.html" class="mui-navigate-right">
 						我的收藏
 					</a>
 				</li>
@@ -101,11 +102,16 @@
 	mui.init()
 </script>
 <script type="text/javascript">
+	/**
+	 * 返回当前页面时进行刷新
+	 * @param {Object} e
+	 */
 	window.addEventListener('refresh', function(e) {  
 		console.log("回调刷新");
 	    location.reload();   
 	    //逻辑处理
 	})
+	
 	//更新个人信息
 	jQuery("#userNameDiv").html(window.localStorage.getItem("uname"));
 	jQuery("#nickNameDiv").html(window.localStorage.getItem("nickName"));
@@ -127,6 +133,9 @@
 		jQuery("#campusDiv").html("石牌校区");
 	}
 	
+	/**
+	 * 初始化页面时请求获取个人信息
+	 */
 	mui.plusReady(function(){
 		//是否存有token
 		var flag = false;
@@ -181,7 +190,6 @@
 						else{
 							jQuery("#campusDiv").html("石牌校区");
 						}
-						
 					}
 					else{
 						alert("其他错误！");
@@ -196,15 +204,14 @@
 		else{
 			alert("登录信息过期！");
 		}
-		
-		
 	});
 	
-	
-	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	/**
+	 * 绑定多个事件，选择到nav，给nav中每个a绑定事件
+	 */
 	mui(".mui-table-view").on('tap', 'a', function(e) {
 		//获取到a中的href属性，对应到子页面的id
-		alert(this.getAttribute("href"));
+		//alert(this.getAttribute("href"));
 		var tagPage = this.getAttribute("href");
 		//打开一个新页面
 		mui.openWindow({

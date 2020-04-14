@@ -74,9 +74,7 @@
 		window.localStorage.setItem("cpno",1);
 		//初始化商品列表页的大小
 		window.localStorage.setItem("cpsize",5);
-		
-		
-		
+
 		//获取当前webview
 		var self = plus.webview.currentWebview();
 		for(var i = 0; i < subPages.length; i++) {
@@ -90,7 +88,9 @@
 		//显示第一个子页面
 		plus.webview.show(subPages[0]);
 	});
-	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	/**
+	 * 绑定多个事件，选择到nav，给nav中每个a绑定事件
+	 */
 	mui(".mui-bar-tab").on('tap', 'a', function(e) {
 		//获取到a中的href属性，对应到子页面的id
 		var tagPage = this.getAttribute("href");
@@ -98,7 +98,10 @@
 		plus.webview.show(tagPage, "fade-in", 100);
 	});
 
-	//监听back按键
+	/**
+	 * 监听back按键
+	 * @param {Object} event
+	 */
 	var clickNum = 0;
 	mui.back = function(event) {
 		clickNum++;

@@ -84,7 +84,18 @@
 								<p class="mui-ellipsis">6645</p>
 							</div>
 						</a>
-					</li> -->
+						<!--商品状态标志(status:0为已租，1为可租)-->
+						<!-- <button type="button" class="mui-btn mui-btn-green">
+							<div>
+								可租入
+							</div>
+						</button>
+						<button type="button" class="mui-btn mui-btn-grey">
+							<div>
+								已被租
+							</div>
+						</button> -->
+					</li>
 				</ul>
 
 			</div>
@@ -101,7 +112,7 @@
 		pullRefresh: {
 			container: '#pullrefresh',
 			down: {
-				auto: true,
+				auto: true,	//初始加载页面刷新一次
 				style: 'circle',
 				callback: pulldownRefresh
 			},
@@ -143,7 +154,7 @@
 					var commodityList = result.data.commodityList;
 					//获取返回的商品个数
 					var n = commodityList.length;
-					console.log("length="+n);
+					//console.log("length="+n);
 					//获取ul
 					var commodityUl = document.getElementById("commodityUl");
 					for(var i = 0; i < n; i++ ){
@@ -161,11 +172,26 @@
 						str +=			"<p class='mui-ellipsis'>¥" + commodity.commodity.rent + "</p>";
 						str +=		"</div>";
 						str +=	"</a>";
+						//获取商品状态，判断是否已被租
+						if(commodity.commodity.status == 1){
+							str += "<button type='button' class='mui-btn mui-btn-green'>";
+							str +=	"<div>";
+							str +=		"可租入";
+							str +=	"</div>";
+							str += "</button>";
+						}
+						else{
+							str += "<button type='button' class='mui-btn mui-btn-grey'>";
+							str += 	"<div>";
+							str += 		"已被租";
+							str += 	"</div>";
+							str += "</button>";
+						}
+						
 						str += "</li>";
 						
 						li.innerHTML = str;
 						commodityUl.appendChild(li);
-						
 					}
 					//页号+1
 					window.localStorage.setItem("cpno",parseInt(cpno)+1);
@@ -180,7 +206,6 @@
 				console.log(e.responseText);
 			}
 		});
-		
 	}
 
 	/**
@@ -188,14 +213,15 @@
 	 */
 	function pullupRefresh() {
 		setTimeout(function() {
+			//获取搜索框内容
 			var title = jQuery("#searchInput").val();
-			loadCommodity(title);		
+			loadCommodity(title);
 			mui('#pullrefresh').pullRefresh().endPullupToRefresh();			
 		}, 1500);
 	}
 
 	/**
-	 * 下拉刷新具体业务实现
+	 * 下拉刷新（重置商品列表）
 	 */
 	function pulldownRefresh() {
 		setTimeout(function() {
@@ -208,29 +234,13 @@
 			//初始化ul内容
 			commodityUl.innerHTML = "";
 			loadCommodity("");
-
-			// var table = document.querySelector(".mui-table-view");
-			// for(var i = 0; i < 3; i++) {
-			// 	var li = document.createElement("li");
-			// 	li.className = "mui-table-view-cell mui-media";
-			// 	var str = "";
-			// 	str += "<a href='home_detail.html'>";
-			// 	str += "<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
-			// 	str += "<div class='mui-media-body'>";
-			// 	str += "商品2";
-			// 	str += "<p class='mui-ellipsis'>这是商品2的详情。</p>";
-			// 	str += "<p class='mui-ellipsis'>669</p>";
-			// 	str += "</div>";
-			// 	str += "</a>";
-
-			// 	li.innerHTML = str;
-			// 	table.insertBefore(li, table.firstChild);
-			// }
 			mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
 		}, 1500);
 	};
 	
-	//绑定搜索框
+	/**
+	 * 搜索框事件
+	 */
 	document.getElementById("searchInput").addEventListener("keypress",function(e){
 		//虚拟键盘回车
 		if(event.keyCode == "13"){
@@ -243,26 +253,30 @@
 			//置ul为空
 			commodityUl.innerHTML = "";
 			loadCommodity(title);
-			console.log("search:"+title);
-			
+			//console.log("search:"+title);
 			event.preventDefault(); // 阻止默认事件---阻止页面刷新
 		}
 	});
 
-	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	/**
+	 * 绑定多个事件，选择到nav，给nav中每个a绑定事件
+	 */
 	mui(".mui-table-view").on('tap', 'a', function(e) {
 		//获取到a中的href属性，对应到子页面的id
-		alert(this.getAttribute("href"));
+		//alert(this.getAttribute("href"));
+		//获取a的父节点li
+		var li = this.parentNode;
+		//console.log(li.id);
 		var tagPage = this.getAttribute("href");
-		//打开一个新聊天页面
+		//打开一个商品详情页面
 		mui.openWindow({
 			url: "home_detail.html",
 			id: "home_detail.html",
 			styles: {
-
+				
 			},
 			extras: {
-
+				cid : li.id	//将cid传到商品详情页面
 			},
 			show: {
 				autoShow: true, //页面loaded事件发生后自动显示，默认为true

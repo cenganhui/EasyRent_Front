@@ -16,54 +16,54 @@
 			<div class="mui-page-content">
 				<p>标题</p>
 				<div class="mui-input-row">
-					<input id='title' type="text" class="mui-input-clear  contact" placeholder="标题..." />
+					<input id='titleInput' type="text" class="mui-input-clear  contact" placeholder="标题..." />
 				</div>
 				<p>详情</p>
 				<div class="row mui-input-row">
-					<textarea id='detail' class="mui-input-clear question" placeholder="商品详情..."></textarea>
+					<textarea id='detailText' class="mui-input-clear question" placeholder="商品详情..."></textarea>
 				</div>
 			
-				<div style="margin-top: 10px;text-align: center;">
+				<div style="margin-top: 10px;">
 					<!--押金-->
 					押金：
-					<div class="mui-numbox" data-numbox-step='1'>
+					<div class="mui-numbox" data-numbox-step='1' style="width: 60%;margin-left: 20px;">
 						<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-						<input id="deposit" class="mui-input-numbox" type="number" />
+						<input id="depositInput" class="mui-input-numbox" type="number" />
 						<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
 					</div>
-
+					<br>
 					<!--租金-->
 					租金：
-					<div class="mui-numbox" data-numbox-step='1'>
+					<div class="mui-numbox" data-numbox-step='1' style="width: 60%;margin-left: 20px; margin-top: 10px;">
 						<button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
-						<input id="rent" class="mui-input-numbox" type="number" />
+						<input id="rentInput" class="mui-input-numbox" type="number" />
 						<button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
 					</div>
 				</div>
-
+				
 				<p>图片</p>
 				<div id='imageList' class="row image-list">
 
 				</div>
-
+				
 				<!--调用相机按钮-->
-				<button id='galleryBtn' type="button" class="mui-btn mui-btn-blue" style="margin-top: 6px;">相册</button>
-
+				<button id='galleryBtn' type="button" class="mui-btn mui-btn-blue" style="margin-top: 6px;">相册</button>				
 				<!--出租时间-->
-				<button id='rentTimeBtn' type="button" class="mui-btn mui-btn-yellow" style="margin-top: 6px;">
-					<div id="rentTimeDiv">
+				<button id='rentalTimeBtn' type="button" class="mui-btn mui-btn-yellow" style="margin-top: 6px;">
+					<div id="rentalTimeDiv">
 						出租时间
 					</div>
 				</button>
+				
 				<!--归还时间-->
-				<button id='returnTimeBtn' type="button" class="mui-btn mui-btn-yellow" style="margin-top: 6px;">
-					<div id="returnTimeDiv">
+				<button id='requestTimeBtn' type="button" class="mui-btn mui-btn-yellow" style="margin-top: 6px;">
+					<div id="requestTimeDiv">
 						归还时间
 					</div>
 				</button>
-
+				
 				<!--发布按钮-->
-				<button id='submit' type="button" class="mui-btn mui-btn-green" style="margin-top: 6px;">发布</button>
+				<button id='submitBtn' type="button" class="mui-btn mui-btn-green" style="margin-top: 6px;">发布</button>
 			</div>
 		</div>
 	</body>
@@ -72,13 +72,19 @@
 <script src="../js/mui.min.js"></script>
 <!--<script src="../js/feedback-page.js"></script>-->
 <script src="../js/mui.picker.min.js"></script>
+<script src="../js/er.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
 <script type="text/javascript">
 	mui.init()
 </script>
 <script type="text/javascript">
-	//为相册按钮绑定事件
+	
+	//获取图片list和相册按钮
 	var imageList = document.getElementById("imageList");
 	var galleryBtn = document.getElementById("galleryBtn");
+	/**
+	 * 相册按钮事件
+	 */
 	galleryBtn.addEventListener("tap", function() {
 		//从相册选取图片
 		plus.gallery.pick(
@@ -99,40 +105,111 @@
 				console(e);
 			}, {
 				filter: "image",
-				multiple: true //多选
+				multiple: true //图片多选
 			}
 		)
 
 	})
 
 	//日期选择
-	var rentTimeBtn = document.querySelector("#rentTimeBtn");
-	var rentTimeDiv = document.querySelector("#rentTimeDiv");
+	var rentalTimeBtn = document.querySelector("#rentalTimeBtn");
+	var rentalTimeDiv = document.querySelector("#rentalTimeDiv");
 
-	var returnTimeBtn = document.querySelector("#returnTimeBtn");
-	var returnTimeDiv = document.querySelector("#returnTimeDiv");
+	var requestTimeBtn = document.querySelector("#requestTimeBtn");
+	var requestTimeDiv = document.querySelector("#requestTimeDiv");
+	//日期选择器设置
 	var dtPicker = new mui.DtPicker({
-		type: "date",
-		beginDate: new Date(2000, 1, 1),
-		endDate: new Date(2050, 12, 31)
+		type: "date",	//时间类型，如：date为年月日
+		beginDate: new Date(2000, 1, 1),	//最小时间
+		endDate: new Date(2050, 12, 31)		//最大时间
 	});
-
-	//出租时间选择按钮事件
-	rentTimeBtn.addEventListener("tap", function() {
+	//初始化出租时间和要求归还时间
+	var rentalTimeLong = "";
+	var requestTimeLong = "";
+	/**
+	 * 出租时间选择按钮
+	 */
+	rentalTimeBtn.addEventListener("tap", function() {
 		dtPicker.show(function(result) {
-			//console.log(result.value);
-			console.log("出租时间：" + result.y.value + "-" + result.m.value + "-" + result.d.value);
-			var str = "出租时间 " + result.y.value + "-" + result.m.value + "-" + result.d.value;
-			rentTimeDiv.innerHTML = str;
-
+			rentalTimeLong = dateToLong(result);
+			var dateTime1 = longToDate1(rentalTimeLong);
+			var dateTime2 = longToDate2(rentalTimeLong);
+			console.log("出租时间：" + "long:" + rentalTimeLong + "    date1:" + dateTime1 + "    date2:" + dateTime2);
+			var str = "出租时间 " + dateTime1;
+			rentalTimeDiv.innerHTML = str;
 		});
 	}, false);
-	//归还时间选择按钮事件
-	returnTimeBtn.addEventListener("tap", function() {
+	/**
+	 * 要求归还时间选择按钮
+	 */
+	requestTimeBtn.addEventListener("tap", function() {
 		dtPicker.show(function(result) {
-			console.log("归还时间：" + result.y.value + "-" + result.m.value + "-" + result.d.value);
-			var str = "归还时间 " + result.y.value + "-" + result.m.value + "-" + result.d.value;
-			returnTimeDiv.innerHTML = str;
+			requestTimeLong = dateToLong(result);
+			var dateTime1 = longToDate1(requestTimeLong);
+			var dateTime2 = longToDate2(requestTimeLong);
+			console.log("归还时间：" + "long:" + requestTimeLong + "    date1:" + dateTime1 + "    date2:" + dateTime2);
+			var str = "归还时间 " + dateTime1;
+			requestTimeDiv.innerHTML = str;
 		});
 	});
+	
+	/**
+	 * 发布商品按钮绑定事件
+	 */
+	jQuery("#submitBtn").click(function(){
+		//获取发布商品相关数据
+		var title = jQuery("#titleInput").val();
+		var detail = jQuery("#detailText").val();
+		var deposit = parseFloat(jQuery("#depositInput").val());
+		var rent = parseFloat(jQuery("#rentInput").val());
+		var shelfTime = new Date();
+		var shelfTimeLong = dateToLong(shelfTime);
+		var data = {
+			"title" : title,
+			"detail" : detail,
+			"deposit" : deposit,
+			"rent" : rent,
+			"rentalTime" : rentalTimeLong,
+			"requestTime" : requestTimeLong,
+			"shelfTime" : shelfTimeLong,
+			"status" : 1
+		}
+		//console.log(JSON.stringify(data));
+		var flag = jsonHasEmpty(data);
+		//判断输入信息是否为空
+		if(flag){
+			jQuery.ajax({
+				method : "POST",
+				url : getUrl() + "/api/v1/commodity",
+				contentType : "application/json;charset=utf-8",
+				headers : {
+					"Authorization" : window.localStorage.getItem("token")
+				},
+				data : JSON.stringify(data),
+				xhrFields : {
+					withCredentials : true
+				},
+				success : function(result){
+					console.log("code:"+result.code+" msg:"+result.msg);
+					if(result.code == 200){
+						console.log("商品发布成功");
+						mui.toast("商品发布成功");
+						//刷新发布页面
+						location.reload();
+					}
+					else{
+						mui.toast("其他错误！");
+					}
+				},
+				error : function(e){
+					console.log(e.status);
+					console.log(e.responseText);
+				}
+			});
+		}
+		else{
+			mui.toast("商品信息不全");
+		}
+	});
+	
 </script>

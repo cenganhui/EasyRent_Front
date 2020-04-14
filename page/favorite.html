@@ -6,18 +6,41 @@
 		<title></title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/main.css" />
 	</head>
 
 	<body>
+		<!--顶部-->
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">收藏夹</h1>
+		</header>
+		
 		
 		<div class="mui-content">
-		
-			<!--已发布商品列表-->
-			<ul id="myPublishUl" class="mui-table-view">
-				
+
+			<!--收藏数据列表-->
+			<ul id="favoriteUl" class="mui-table-view">
+				<!-- <li class="mui-table-view-cell mui-media">
+					<a href="home_detail.html">
+						<img class="mui-media-object mui-pull-left" src="../image/phone.jpg">
+						<div class="mui-media-body">
+							商品1
+							<p class="mui-ellipsis">这是商品1的详情。</p>
+							<p class="mui-ellipsis">6645</p>
+						</div>
+					</a> -->
+					<!--取消收藏按钮-->
+					<!-- <button id="isfavoriteBtn" type="button" class="mui-btn mui-btn-red">
+						<div id="isfavoriteDiv">
+							取消收藏
+						</div>
+					</button>
+				</li> -->
 			</ul>
-		
+
 		</div>
+
 	</body>
 
 </html>
@@ -28,16 +51,15 @@
 	mui.init()
 </script>
 <script>
-	
 	/**
-	 * 已发商品页面初始化加载已发商品列表
+	 * 收藏页面初始化加载收藏列表
 	 */
 	mui.plusReady(function () {
-	    //初始化已发商品列表页号和每次加载数量
+	    //初始化收藏夹页号和每次加载数量
 	    var cpno = 1;
 	    var cpsize = 100;
 	    //GET方法url
-	    var url = getUrl() + "/api/v1/commodity_my?pno=" + cpno + "&psize=" + cpsize;
+	    var url = getUrl() + "/api/v1/favorite?pno=" + cpno + "&psize=" + cpsize;
 	    jQuery.ajax({
 	    	method : "GET",
 	    	url : url,
@@ -53,39 +75,39 @@
 	    		
 	    		console.log("code:"+result.code+" msg:"+result.msg);
 	    		if(result.code == 200){
-	    			console.log("已发布商品列表获取成功");
-	    			//获取已发商品列表列表
-	    			var commodityList = result.data.commodityList;
+	    			console.log("收藏列表获取成功");
+	    			//获取收藏列表
+	    			var favoriteList = result.data.favoriteList;
 	    			//获取返回的收藏个数
-	    			var n = commodityList.length;
+	    			var n = favoriteList.length;
 	    			//console.log("length="+n);
 	    			//获取ul
-	    			var myPublishUl = document.getElementById("myPublishUl");
+	    			var favoriteUl = document.getElementById("favoriteUl");
 	    			for(var i = 0; i < n; i++ ){
-	    				var commodity = commodityList[i];
+	    				var commodity = favoriteList[i].commodity;
 	    				var li = document.createElement("li");
 	    				li.className = "mui-table-view-cell mui-media";
 	    				var str = "";
 	    				
-	    				str += "<li id=" + commodity.commodity.cid + " class='mui-table-view-cell mui-media'>";
+	    				str += "<li id=" + commodity.cid + " class='mui-table-view-cell mui-media'>";
 	    				str += 	"<a href='home_detail.html'>";
 	    				str +=		"<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
 	    				str +=		"<div class='mui-media-body'>";
-	    				str +=			commodity.commodity.title;
-	    				str +=			"<p class='mui-ellipsis'>" + commodity.commodity.detail + "</p>";
-	    				str +=			"<p class='mui-ellipsis'>¥" + commodity.commodity.rent + "</p>";
+	    				str +=			commodity.title;
+	    				str +=			"<p class='mui-ellipsis'>" + commodity.detail + "</p>";
+	    				str +=			"<p class='mui-ellipsis'>¥" + commodity.rent + "</p>";
 	    				str +=		"</div>";
 	    				str +=	"</a>";
-						str += "<button id=" + commodity.commodity.cid + " type='button' class='mui-btn mui-btn-red' onclick='deleteCommodity(this)'>";
+						str += "<button id=" + favoriteList[i].fid + " type='button' class='mui-btn mui-btn-red' onclick='cancleFavorite(this)'>";
 						str += 	"<div>";
-						str += 		"删除";
+						str += 		"取消收藏";
 						str += 	"</div>";
 						str += "</button>";
 	    				
 	    				str += "</li>";
 	    				
 	    				li.innerHTML = str;
-	    				myPublishUl.appendChild(li);
+	    				favoriteUl.appendChild(li);
 	    			}
 	    		}
 	    		else{
@@ -99,21 +121,20 @@
 	    });
 	})
 	
-	
 	/**
-	 * 删除发布商品事件
+	 * 取消收藏事件
 	 */
-	function deleteCommodity(deleteBtn){
+	function cancleFavorite(cancelBtn){
 		//mui.toast(cancelBtn.id);
 		if(window.confirm("是否删除")){
 			//console.log("yes");
 			var data = {
-				"cid" : deleteBtn.id
+				"fid" : cancelBtn.id
 			}
-	
+
 			jQuery.ajax({
 				method : "DELETE",
-				url : getUrl() + "/api/v1/commodity",
+				url : getUrl() + "/api/v1/favorite",
 				contentType : "application/json;charset=utf-8",
 				data : JSON.stringify(data),
 				headers : {
@@ -126,8 +147,8 @@
 					
 					console.log("code:"+result.code+" msg:"+result.msg);
 					if(result.code == 200){
-						console.log("已删除");
-						mui.toast("已删除");
+						console.log("已取消收藏");
+						mui.toast("已取消收藏");
 						//刷新收藏页面
 						location.reload();
 					}
@@ -145,7 +166,6 @@
 			//console.log("no");
 		}
 	}
-	
 	
 	/**
 	 * 绑定多个事件，选择到nav，给nav中每个a绑定事件

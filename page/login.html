@@ -14,7 +14,7 @@
 		<header class="mui-bar mui-bar-nav">
 			<h1 class="mui-title">登录</h1>
 		</header>
-
+		<!-- 登录信息 -->
 		<div class="mui-content">
 			<form class="mui-input-group">
 				<div class="mui-input-row">
@@ -41,8 +41,11 @@
 <script type="text/javascript">
 	mui.init();
 
-	//注册按钮绑定事件
+	//获取注册按钮
 	var registerBtn = document.getElementById("registerBtn");
+	/**
+	 * 注册按钮事件
+	 */
 	registerBtn.addEventListener("tap", function() {
 		//打开一个注册页面
 		mui.openWindow({
@@ -68,13 +71,16 @@
 				}
 			}
 		});
-		
 	});
 	
 	
-	//登录按钮绑定事件
+	//获取登录按钮
 	var loginBtn = document.getElementById("loginBtn");
+	/**
+	 * 登录事件
+	 */
 	loginBtn.addEventListener("tap",function(){
+		//获取用户名和密码
 		var userName = jQuery("#userNameInput").val();
 		var pwd = jQuery("#pwdInput").val();
 		var data = {
@@ -97,7 +103,7 @@
 					console.log("code:"+result.code+" msg:"+result.msg);
 					if(result.code == 200){
 						window.localStorage.setItem("token",result.data.token);
-						console.log("login:"+result.data);
+						console.log("登录成功");
 						mui.toast("登录成功！");
 						//打开首页（index.html）
 						mui.openWindow({
@@ -122,8 +128,6 @@
 								}
 							}
 						});
-						
-						
 					}
 					else if(result.code == 201){
 						mui.toast("用户名或密码为空！");
@@ -144,30 +148,5 @@
 		else{
 			alert("用户名或密码为空！");
 		}
-		
-		
-		
-		// mui.openWindow({
-		// 	url:"../index.html",
-		// 	id:"../index.html",
-		// 	styles:{
-				
-		// 	},
-		// 	extras:{
-				
-		// 	},
-		// 	show:{
-		// 		autoShow:true,
-		// 		aniShow:"slide-in-right",
-		// 		duration:100
-		// 	},
-		// 	waiting:{
-		// 		autoShow:true,
-		// 		title:"正在加载...",
-		// 		options:{
-		// 			
-		// 		}
-		// 	}
-		// });
 	});
 </script>
