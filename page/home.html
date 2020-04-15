@@ -161,9 +161,10 @@
 						var commodity = commodityList[i];
 						var li = document.createElement("li");
 						li.className = "mui-table-view-cell mui-media";
+						li.id = commodity.commodity.cid;
 						var str = "";
 						
-						str += "<li id=" + commodity.commodity.cid + " class='mui-table-view-cell mui-media'>";
+						//str += "<li id=" + commodity.commodity.cid + " class='mui-table-view-cell mui-media'>";
 						str += 	"<a href='home_detail.html'>";
 						str +=		"<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
 						str +=		"<div class='mui-media-body'>";
@@ -188,7 +189,7 @@
 							str += "</button>";
 						}
 						
-						str += "</li>";
+						//str += "</li>";
 						
 						li.innerHTML = str;
 						commodityUl.appendChild(li);
