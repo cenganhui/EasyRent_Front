@@ -10,28 +10,40 @@
 
 	<body>
 		
-		<div class="mui-content">
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
 		
-			<!--已发布商品列表-->
-			<ul id="myPublishUl" class="mui-table-view">
+				<!--已发布商品列表-->
+				<ul id="myPublishUl" class="mui-table-view">
+					
+				</ul>
 				
-			</ul>
 		
+			</div>
 		</div>
+		
 	</body>
 
 </html>
 <script src="../js/mui.min.js"></script>
 <script src="../js/er.js"></script>
 <script src="../js/jquery-3.5.0.js"></script>
-<script type="text/javascript">
-	mui.init()
-</script>
 <script>
+	mui.init({
+		pullRefresh: {
+			container: '#pullrefresh',
+			down: {
+				auto: true,	//初始加载页面刷新一次
+				style: 'circle',
+				callback: pulldownRefresh
+			}
+		}
+	})
 	/**
 	 * 已发商品页面初始化加载已发商品列表
 	 */
-	mui.plusReady(function () {
+	function loadMyCommodity() {
 	    //初始化已发商品列表页号和每次加载数量
 	    var cpno = 1;
 	    var cpsize = 100;
@@ -60,6 +72,7 @@
 	    			//console.log("length="+n);
 	    			//获取ul
 	    			var myPublishUl = document.getElementById("myPublishUl");
+					myPublishUl.innerHTML = "";
 	    			for(var i = 0; i < n; i++ ){
 	    				var commodity = commodityList[i];
 	    				var li = document.createElement("li");
@@ -96,8 +109,18 @@
 	    		console.log(e.responseText);
 	    	}
 	    });
-	})
+	}
 	
+	
+	/**
+	 * 下拉刷新（重置发布商品列表）
+	 */
+	function pulldownRefresh() {
+		setTimeout(function() {
+			loadMyCommodity();
+			mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+		}, 1500);
+	};
 	
 	/**
 	 * 删除发布商品事件

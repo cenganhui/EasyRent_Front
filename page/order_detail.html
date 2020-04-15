@@ -187,7 +187,9 @@
 		"oid" : 0,
 		"status" : 0,
 		"buyerId" : 0,
-		"sellerId" : 0
+		"sellerId" : 0,
+		"cid" : 0
+		
 	}
 	
 	/**
@@ -228,6 +230,7 @@
 					orderData.status = order.status;
 					orderData.buyerId = order.buyerId;
 					orderData.sellerId = order.sellerId;
+					orderData.cid = commodity.cid;
 					
 					//设置订单详情信息
 					jQuery("#titleDiv").html(commodity.title);
@@ -368,7 +371,8 @@
 				actualTime = dateToLong(time);
 				updateOrder(oid,status,actualRentalTime,actualTime);
 				//重置商品状态
-				//TODO
+				//console.log(orderData.cid);
+				//updateCommodity(orderData.cid,1);
 			}
 		}//如果是卖家
 		else if(window.localStorage.getItem("uid") == orderData.sellerId){
@@ -389,10 +393,50 @@
 			if(orderData.status == 0){
 				updateOrder(orderData.oid,4,0,0);
 				//重置商品状态
-				//TODO
+				//console.log(orderData.cid);
+				//updateCommodity(orderData.cid,1);
 			}
 		}
 	})
+	
+	/**
+	 * 重置商品状态
+	 * @param {Object} cid
+	 * @param {Object} status
+	 */
+	function updateCommodity(cid,status){
+		var data = {
+			"cid" : cid,
+			"status" : status
+		}
+		jQuery.ajax({
+			method : "PUT",
+			url : getUrl() + "/api/v1/commodity",
+			contentType : "application/json;charset=utf-8",
+			data : JSON.stringify(data),
+			headers : {
+				"Authorization" : window.localStorage.getItem("token")
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(result){
+				
+				console.log("code:"+result.code+" msg:"+result.msg);
+				if(result.code == 200){
+					var msg = jQuery("#changeOrderBtn").html();
+					console.log("商品状态重置成功");
+				}
+				else{
+					alert("其他错误！");
+				}
+			},
+			error : function(e){
+				console.log(e.status);
+				console.log(e.responseText);
+			}
+		});
+	}
 	
 	/**
 	 * 更新订单信息
