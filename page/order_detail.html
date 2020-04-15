@@ -64,48 +64,47 @@
 					<div>
 						标题：
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						商品1
+					<div id="titleDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						详情：
 					</div>
-					<div style="margin-right: 0;">
-						这是是艾弗森的房间爱丽丝肯德基福利卡设计费立刻就爱上了咖啡拉丝机静安寺蝶恋蜂狂静安寺路口的减肥了卡斯接待来访框架啊凉快圣诞节了开发 就爱上了副科级拉
-						斯会计分录卡视角了副科级阿斯利康
+					<div id="detailDiv" style="margin-right: 0;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						押金:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						1000
+					<div id="depositDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						租金:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						200
+					<div id="rentDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						卖家:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						用户2
+					<div id="sellerDiv" style="margin-right: 0;text-align: right;">
+						
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						买家:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						用户1
+					<div id="buyerDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				
@@ -113,53 +112,54 @@
 					<div>
 						出租时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-4-1
+					<div id="rentalTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						实际出租时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-4-1
+					<div id="actualRentalTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						归还时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-5-1
+					<div id="requestTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						实际归还时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-5-1
+					<div id="actualTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						订单创建时间:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						2020-3-28
+					<div id="creationTimeDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 				<li class="mui-table-view-cell">
 					<div>
 						订单状态:
 					</div>
-					<div style="margin-right: 0;text-align: right;">
-						已完成
+					<div id="statusDiv" style="margin-right: 0;text-align: right;">
+						
 					</div>
 				</li>
 			</ul>
 			<!--订单相关操作按钮-->
-			<button type="button" class="mui-btn mui-btn-blue mui-btn-block">已完成</button>
+			<button id="changeOrderBtn" type="button" class="mui-btn mui-btn-blue mui-btn-block"></button>
+			<button id="cancelBtn" type="button" class="mui-btn mui-btn-blue mui-btn-block"></button>
 
 		</div>
 
@@ -167,6 +167,278 @@
 
 </html>
 <script src="../js/mui.min.js"></script>
+<script src="../js/er.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
 <script type="text/javascript">
-	mui.init()
+	mui.init({
+		beforeback: function() {
+			//获得列表界面的webvie，var openView = plus.webview.currentWebview().opener();
+			var openView = plus.webview.currentWebview().opener();
+			//触发info界面的自定义事件（refresh）,从而进行数据刷新   
+			mui.fire(openView, "refresh");
+			//返回true，继续页面关闭逻辑     return true;  
+		}
+	})
+</script>
+<script type="text/javascript">
+	
+	//设置订单数据
+	var orderData = {
+		"oid" : 0,
+		"status" : 0,
+		"buyerId" : 0,
+		"sellerId" : 0
+	}
+	
+	/**
+	 * 订单详情页面初始化，获取订单详情信息
+	 */
+	mui.plusReady(function() {
+		//传值获取点击的oid
+		var oid = plus.webview.currentWebview().oid;
+		//console.log("oid:"+oid);
+		//GET方法url
+		var url = getUrl() + "/api/v1/order_detail?oid=" + oid;
+		
+		jQuery.ajax({
+			method : "GET",
+			url : url,
+			contentType : "application/json;charset=utf-8",
+			//data : JSON.stringify(data),
+			headers : {
+				"Authorization" : window.localStorage.getItem("token")
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(result){
+				
+				console.log("code:"+result.code+" msg:"+result.msg);
+				if(result.code == 200){
+					//获取订单
+					var order = result.data.order;
+					//获取买家和卖家昵称
+					var buyerNickName = result.data.buyerNickName;
+					var sellerNickName = result.data.sellerNickName;
+					//获取订单中商品的商品
+					var commodity = result.data.order.commodity;
+					
+					//设置订单数据
+					orderData.oid = order.oid;
+					orderData.status = order.status;
+					orderData.buyerId = order.buyerId;
+					orderData.sellerId = order.sellerId;
+					
+					//设置订单详情信息
+					jQuery("#titleDiv").html(commodity.title);
+					jQuery("#detailDiv").html(commodity.detail);
+					jQuery("#depositDiv").html("¥ " + commodity.deposit);
+					jQuery("#rentDiv").html("¥ " + commodity.rent);
+					jQuery("#buyerDiv").html(buyerNickName);
+					jQuery("#sellerDiv").html(sellerNickName);
+					jQuery("#rentalTimeDiv").html(longToDate1(commodity.rentalTime));
+					jQuery("#actualRentalTimeDiv").html(longToDate1(order.actualRentalTime));
+					jQuery("#requestTimeDiv").html(longToDate1(commodity.requestTime));
+					jQuery("#actualTimeDiv").html(longToDate1(order.actualTime));
+					jQuery("#creationTimeDiv").html(longToDate2(order.creationTime));
+					
+					//获取订单状态
+					var status = order.status;
+					var statusDiv = document.getElementById("statusDiv");
+					var changeOrderBtn = document.getElementById("changeOrderBtn");
+					var cancelBtn = document.getElementById("cancelBtn");
+					
+					// 订单状态				买家						买家				[]是按钮,[hide]是按钮隐藏,[*]是按钮不可用
+					// 0				未付款[付款][取消]		待付款[出租*]
+					// 1				已付款[付款*][hide]		已付款[出租]
+					// 2				租借中[归还][hide]		已出租[出租*]
+					// 3				已完成[已完成*][hide]		已完成[已完成*]
+					// 4				已取消[已取消*][hide]		已取消[已取消*]
+					
+					//若我是买家
+					if(window.localStorage.getItem("uid") == order.buyerId){
+						if(status == 0){
+							statusDiv.innerHTML = "未付款";
+							changeOrderBtn.innerHTML = "付款";
+							changeOrderBtn.disabled = false;
+							changeOrderBtn.className = "mui-btn mui-btn-blue mui-btn-block";
+							cancelBtn.innerHTML = "取消";
+							cancelBtn.disabled = false;
+							cancelBtn.className = "mui-btn mui-btn-blue mui-btn-block";
+						}
+						else if(status == 1){
+							statusDiv.innerHTML = "已付款";
+							changeOrderBtn.innerHTML = "付款";
+							changeOrderBtn.disabled = true;
+							changeOrderBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+							cancelBtn.style.display = "none";
+							
+						}
+						else if(status == 2){
+							statusDiv.innerHTML = "租借中";
+							changeOrderBtn.innerHTML = "归还";
+							changeOrderBtn.disabled = false;
+							changeOrderBtn.className = "mui-btn mui-btn-blue mui-btn-block";
+							cancelBtn.style.display = "none";
+						}
+						else if(status == 3){
+							statusDiv.innerHTML = "已完成";
+							changeOrderBtn.innerHTML = "已完成";
+							changeOrderBtn.disabled = true;
+							changeOrderBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+							cancelBtn.style.display = "none";
+						}
+						else if(status == 4){
+							statusDiv.innerHTML = "已取消";
+							changeOrderBtn.innerHTML = "已取消";
+							changeOrderBtn.disabled = true;
+							changeOrderBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+							cancelBtn.style.display = "none";
+						}
+					}
+
+					//若我是卖家
+					if(window.localStorage.getItem("uid") == order.sellerId){
+						//隐藏取消按钮
+						cancelBtn.style.display = "none";
+						if(status == 0){
+							statusDiv.innerHTML = "待付款";
+							changeOrderBtn.innerHTML = "出租";
+							changeOrderBtn.disabled = true;
+							changeOrderBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+						}
+						else if(status == 1){
+							statusDiv.innerHTML = "已付款";
+							changeOrderBtn.innerHTML = "出租";
+							changeOrderBtn.disabled = false;
+							changeOrderBtn.className = "mui-btn mui-btn-blue mui-btn-block";
+							
+						}
+						else if(status == 2){
+							statusDiv.innerHTML = "已出租";
+							changeOrderBtn.innerHTML = "出租";
+							changeOrderBtn.disabled = true;
+							changeOrderBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+						}
+						else if(status == 3){
+							statusDiv.innerHTML = "已完成";
+							changeOrderBtn.innerHTML = "已完成";
+							changeOrderBtn.disabled = true;
+							changeOrderBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+						}
+						else if(status == 4){
+							statusDiv.innerHTML = "已取消";
+							changeOrderBtn.innerHTML = "已取消";
+							changeOrderBtn.disabled = true;
+							changeOrderBtn.className = "mui-btn mui-btn-grey mui-btn-block";
+						}
+					}
+					
+					
+				}
+				else{
+					alert("其他错误！");
+				}
+			},
+			error : function(e){
+				console.log(e.status);
+				console.log(e.responseText);
+			}
+		});
+	})
+	
+	/**
+	 * 更新订单按钮
+	 */
+	jQuery("#changeOrderBtn").click(function(){
+		//console.log(JSON.stringify(orderData));
+		var oid = orderData.oid;
+		var status =0;
+		var actualRentalTime = 0;
+		var actualTime = 0;
+		//如果是买家
+		if(window.localStorage.getItem("uid") == orderData.buyerId){
+			if(orderData.status == 0){	//买家付款
+				status = 1;
+				updateOrder(oid,status,actualRentalTime,actualTime);
+			}
+			else if(orderData.status == 2){	//买家归还
+				status = 3;
+				var time = new Date();
+				actualTime = dateToLong(time);
+				updateOrder(oid,status,actualRentalTime,actualTime);
+				//重置商品状态
+				//TODO
+			}
+		}//如果是卖家
+		else if(window.localStorage.getItem("uid") == orderData.sellerId){
+			if(orderData.status == 1){	//卖家出租
+				status = 2;
+				var time = new Date();
+				actualRentalTime = dateToLong(time);
+				updateOrder(oid,status,actualRentalTime,actualTime);
+			}
+		}
+	})
+	
+	/**
+	 * 取消订单按钮
+	 */
+	jQuery("#cancelBtn").click(function(){
+		if(window.localStorage.getItem("uid") == orderData.buyerId){
+			if(orderData.status == 0){
+				updateOrder(orderData.oid,4,0,0);
+				//重置商品状态
+				//TODO
+			}
+		}
+	})
+	
+	/**
+	 * 更新订单信息
+	 * @param {Object} oid
+	 * @param {Object} status
+	 * @param {Object} actualRentalTime
+	 * @param {Object} actualTime
+	 */
+	function updateOrder(oid,status,actualRentalTime,actualTime){
+		var data = {
+			"oid" : oid,
+			"status" : status,
+			"actualRentalTime" : actualRentalTime,
+			"actualTime" : actualTime
+		}
+		jQuery.ajax({
+			method : "PUT",
+			url : getUrl() + "/api/v1/order",
+			contentType : "application/json;charset=utf-8",
+			data : JSON.stringify(data),
+			headers : {
+				"Authorization" : window.localStorage.getItem("token")
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(result){
+				
+				console.log("code:"+result.code+" msg:"+result.msg);
+				if(result.code == 200){
+					var msg = jQuery("#changeOrderBtn").val();
+					console.log(msg + "成功");
+					mui.toast(msg + "成功");
+					//刷新
+					location.reload();
+				}
+				else{
+					alert("其他错误！");
+				}
+			},
+			error : function(e){
+				console.log(e.status);
+				console.log(e.responseText);
+			}
+		});
+		
+	}
+	
 </script>

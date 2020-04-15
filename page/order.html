@@ -17,9 +17,9 @@
 		</header>
 		
 		<div class="mui-content">
-			<!--数据列表-->
-			<ul class="mui-table-view">
-				<li class="mui-table-view-cell mui-media">
+			<!--订单数据列表-->
+			<ul id="orderUl" class="mui-table-view">
+				<!-- <li class="mui-table-view-cell mui-media">
 					<a href="order_detail.html">
 						<img class="mui-media-object mui-pull-left" src="../image/phone.jpg">
 						<div class="mui-media-body">
@@ -33,31 +33,158 @@
 							已完成
 						</div>
 					</button>
-				</li>
+				</li> -->
 			</ul>
 		</div>
 	</body>
 
 </html>
 <script src="../js/mui.min.js"></script>
+<script src="../js/er.js"></script>
+<script src="../js/jquery-3.5.0.js"></script>
 <script type="text/javascript">
 	mui.init()
 </script>
 <script type="text/javascript">
-	//绑定多个事件，选择到nav，给nav中每个a绑定事件
+	
+	/**
+	 * 返回当前页面时进行刷新
+	 * @param {Object} e
+	 */
+	window.addEventListener('refresh', function(e) {  
+		console.log("回调刷新");
+	    location.reload();   
+	    //逻辑处理
+	})
+	
+	/**
+	 * 订单页面初始化加载订单列表
+	 */
+	mui.plusReady(function () {
+	    //初始化订单夹页号和每次加载数量
+	    var cpno = 1;
+	    var cpsize = 100;
+	    //GET方法url
+	    var url = getUrl() + "/api/v1/order?pno=" + cpno + "&psize=" + cpsize;
+	    jQuery.ajax({
+	    	method : "GET",
+	    	url : url,
+	    	contentType : "application/json;charset=utf-8",
+	    	//data : JSON.stringify(data),
+	    	headers : {
+	    		"Authorization" : window.localStorage.getItem("token")
+	    	},
+	    	xhrFields : {
+	    		withCredentials : true
+	    	},
+	    	success : function(result){
+	    		
+	    		console.log("code:"+result.code+" msg:"+result.msg);
+	    		if(result.code == 200){
+	    			console.log("订单列表获取成功");
+	    			//获取订单列表
+	    			var orderList = result.data.orderList;
+	    			//获取返回的订单个数
+	    			var n = orderList.length;
+	    			//console.log("length="+n);
+	    			//获取ul
+	    			var orderUl = document.getElementById("orderUl");
+	    			for(var i = 0; i < n; i++ ){
+	    				var commodity = orderList[i].commodity;
+	    				var li = document.createElement("li");
+	    				li.className = "mui-table-view-cell mui-media";
+	    				var str = "";
+	    				
+	    				str += "<li id=" + orderList[i].oid + " class='mui-table-view-cell mui-media'>";
+	    				str += 	"<a href='order_detail.html'>";
+	    				str +=		"<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
+	    				str +=		"<div class='mui-media-body'>";
+	    				str +=			commodity.title;
+	    				str +=			"<p class='mui-ellipsis'>" + commodity.detail + "</p>";
+	    				str +=			"<p class='mui-ellipsis'>¥" + commodity.rent + "</p>";
+	    				str +=		"</div>";
+	    				str +=	"</a>";
+						str += "<button id=" + orderList[i].oid + " type='button' class='mui-btn mui-btn-blue' onclick='changeOrder(this)'>";
+						str += 	"<div>";
+						//获取订单状态
+						var status = orderList[i].status;
+						//若我是买家
+						if(window.localStorage.getItem("uid") == orderList[i].buyerId){
+							if(status == 0){
+								str += "未付款";
+							}
+							else if(status == 1){
+								str += "已付款";
+							}
+							else if(status == 2){
+								str += "租借中";
+							}
+							else if (status ==3){
+								str += "已完成"
+							}
+							else if(status ==4){
+								str += "已取消";
+							}
+						}
+						//如果我是卖家
+						if(window.localStorage.getItem("uid") == orderList[i].sellerId){
+							if(status == 0){
+								str += "待付款";
+							}
+							else if(status == 1){
+								str += "已付款";
+							}
+							else if(status == 2){
+								str += "已出租";
+							}
+							else if (status ==3){
+								str += "已完成";
+							}
+							else if(status ==4){
+								str += "已取消";
+							}
+						}
+						
+						str += 	"</div>";
+						str += "</button>";
+	    				
+	    				str += "</li>";
+	    				
+	    				li.innerHTML = str;
+	    				orderUl.appendChild(li);
+	    			}
+	    		}
+	    		else{
+	    			alert("其他错误！");
+	    		}
+	    	},
+	    	error : function(e){
+	    		console.log(e.status);
+	    		console.log(e.responseText);
+	    	}
+	    });
+	})
+	
+	
+	/**
+	 * 绑定多个事件，选择到nav，给nav中每个a绑定事件
+	 */
 	mui(".mui-table-view").on('tap', 'a', function(e) {
 		//获取到a中的href属性，对应到子页面的id
-		alert(this.getAttribute("href"));
+		//alert(this.getAttribute("href"));
+		//获取a的父节点li
+		var li = this.parentNode;
+		//console.log(li.id);
 		var tagPage = this.getAttribute("href");
-		//打开一个新订单详情页面
+		//打开一个订单详情页面
 		mui.openWindow({
-			url: tagPage,
-			id: tagPage,
+			url: "order_detail.html",
+			id: "order_detail.html",
 			styles: {
-
+				
 			},
 			extras: {
-
+				oid : li.id	//将oid传到订单详情页面
 			},
 			show: {
 				autoShow: true, //页面loaded事件发生后自动显示，默认为true

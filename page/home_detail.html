@@ -126,7 +126,7 @@
 			<!--设置收藏按钮-->
 			<button id="favoriteBtn" type="button" class="mui-btn mui-btn-red mui-btn-block">收藏</button>
 			<!--选择租用按钮-->
-			<button id="rentBtn" type="rentBtn" class="mui-btn mui-btn-blue mui-btn-block">立即租</button>
+			<button id="rentBtn" type="button" class="mui-btn mui-btn-blue mui-btn-block" onclick="rent(this)">立即租</button>
 
 		</div>
 
@@ -140,6 +140,14 @@
 	mui.init()
 </script>
 <script type="text/javascript">
+	
+	//立即租（添加订单）数据
+	var rentData = {
+		"commodityId" : 0,
+		"creationTime" : 0,
+		"sellerId" : 0
+	}
+	
 	/**
 	 * 商品详情页面初始化，获取商品详情信息
 	 */
@@ -178,16 +186,19 @@
 					jQuery("#requestTimeDiv").html(longToDate1(commodity.requestTime));
 					jQuery("#shelfTimeDiv").html(longToDate2(commodity.shelfTime));
 					jQuery("#sellerDiv").html("发布者：" + sellerNickName);
+					//向添加订单数据中添加商品id和卖家id
+					rentData.commodityId = commodity.cid;
+					rentData.sellerId = commodity.userId;
+					
 					//判断商品是否被租并且是否是自己发布的，若被租，则锁定rentBtn
+					var rentBtn = document.getElementById("rentBtn");
 					if(commodity.status == 0 && window.localStorage.getItem("uid") != commodity.userId){
-						var rentBtn = document.getElementById("rentBtn");
 						rentBtn.className = "mui-btn mui-btn-grey mui-btn-block";
 						rentBtn.innerHTML = "已被租";
 						rentBtn.disabled = true;
 					}
 					//若商品是自己发布的，则锁定
 					if(window.localStorage.getItem("uid") == commodity.userId){
-						var rentBtn = document.getElementById("rentBtn");
 						rentBtn.className = "mui-btn mui-btn-grey mui-btn-block";
 						rentBtn.disabled = true;
 					}
@@ -245,11 +256,47 @@
 	})
 	
 	/**
-	 * 立即租按钮事件
+	 * 立即租按钮事件（添加订单）
 	 */
-	jQuery("#rentBtn").click(function(){
-		mui.toast("被点击了");
-	})
+	function rent(rentBtn){
+		//向添加订单数据添加订单创建时间
+		var creationTime = new Date();
+		var creationTimeLong = dateToLong(creationTime);
+		rentData.creationTime = creationTimeLong;
+		//console.log(JSON.stringify(rentData));
+		
+		jQuery.ajax({
+			method : "POST",
+			url : getUrl() + "/api/v1/order",
+			contentType : "application/json;charset=utf-8",
+			data : JSON.stringify(rentData),
+			headers : {
+				"Authorization" : window.localStorage.getItem("token")
+			},
+			xhrFields : {
+				withCredentials : true
+			},
+			success : function(result){
+				
+				console.log("code:"+result.code+" msg:"+result.msg);
+				if(result.code == 200){
+					console.log("租借成功");
+					mui.toast("租借成功！");
+				}
+				else if(result.code == 212){
+					mui.toast("已租借成功");
+				}
+				else{
+					mui.toast("其他错误！");
+				}
+			},
+			error : function(e){
+				console.log(e.status);
+				console.log(e.responseText);
+			}
+		});
+		
+	}
 
 	/**
 	 * 联系发布者按钮事件绑定
