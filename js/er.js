@@ -1,6 +1,7 @@
 //
 function getUrl(){
 	return "http://115.29.201.93:9000";
+	//return "http://127.0.0.1:8080";
 }
 //判断json中value是否为空
 function jsonHasEmpty(data){

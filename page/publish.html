@@ -23,7 +23,7 @@
 					<textarea id='detailText' class="mui-input-clear question" placeholder="商品详情..."></textarea>
 				</div>
 			
-				<div style="margin-top: 10px;">
+				<div style="margin-top: 10px;margin-left: 10px;">
 					<!--押金-->
 					押金：
 					<div class="mui-numbox" data-numbox-step='1' style="width: 60%;margin-left: 20px;">
@@ -42,12 +42,19 @@
 				</div>
 				
 				<p>图片</p>
-				<div id='imageList' class="row image-list">
-
+				<div id='imageList' class="row image-list" style="text-align: center;">
+					<input id="commodityFile1" class="file" type="file" style="display: none!important;" onchange="selectImg(this)" accept="image/*"/>
+					<img id="commodityImg1" class="pic" style="background: #C7C7CC;border: 1px solid #C7C7CC;" height="100px" width="100px" />
+					
+					<input id="commodityFile2" class="file" type="file" style="display: none!important;" onchange="selectImg(this)" accept="image/*"/>
+					<img id="commodityImg2" class="pic" style="margin-left: 5px;background: #C7C7CC;border: 1px solid #C7C7CC;" height="100px" width="100px" />
+					
+					<input id="commodityFile3" class="file" type="file" style="display: none!important;" onchange="selectImg(this)" accept="image/*"/>
+					<img id="commodityImg3" class="pic" style="margin-left: 5px;background: #C7C7CC;border: 1px solid #C7C7CC;" height="100px" width="100px" />
 				</div>
 				
 				<!--调用相机按钮-->
-				<button id='galleryBtn' type="button" class="mui-btn mui-btn-blue" style="margin-top: 6px;">相册</button>				
+				<!-- <button id='galleryBtn' type="button" class="mui-btn mui-btn-blue" style="margin-top: 6px;">相册</button>	 -->			
 				<!--出租时间-->
 				<button id='rentalTimeBtn' type="button" class="mui-btn mui-btn-yellow" style="margin-top: 6px;">
 					<div id="rentalTimeDiv">
@@ -64,6 +71,8 @@
 				
 				<!--发布按钮-->
 				<button id='submitBtn' type="button" class="mui-btn mui-btn-green" style="margin-top: 6px;">发布</button>
+				<!--重置按钮-->
+				<button id='resetBtn' type="button" class="mui-btn mui-btn-green" style="margin-top: 6px;">重置</button>
 			</div>
 		</div>
 	</body>
@@ -78,38 +87,133 @@
 	mui.init()
 </script>
 <script type="text/javascript">
+	//图片文件
+	var formData = new FormData();
+	
+	jQuery("#commodityImg1").click(function(){
+		jQuery("#commodityFile1").trigger("click");
+	})
+	jQuery("#commodityImg2").click(function(){
+		jQuery("#commodityFile2").trigger("click");
+	})
+	jQuery("#commodityImg3").click(function(){
+		jQuery("#commodityFile3").trigger("click");
+	})
+	
+	function selectImg(commodityFile) {
+		//console.log(commodityFile.id);
+		jQuery("#"+commodityFile.id).next().attr("id")
+		var commodityImg = jQuery("#"+commodityFile.id).next().attr("id");
+		jQuery("#"+commodityFile.id).next().attr("src","../image/selected.jpg");
+		//../image/selected.jpg
+		//console.log(commodityImg);
+		//formData.append('avatar', document.getElementById('avatarFile').files[0]);
+	  //       if ($("#avatarFile").val() == '') {
+	  //           return;
+	  //       }
+	  //       var formData = new FormData();
+			// var temp = document.getElementById('avatarFile').files[0];
+	  //       formData.append('avatar', document.getElementById('avatarFile').files[0]);
+			// console.log(temp.name);
+	  //       jQuery.ajax({
+	  //           url: getUrl() + "/api/v1/avatar",
+	  //           type:"post",
+	  //           data: formData,
+			// 	headers : {
+			// 		"Authorization" : window.localStorage.getItem("token")
+			// 	},
+	  //           contentType: false,
+	  //           processData: false,
+	  //           success: function(result) {
+	  //               console.log("code:"+result.code + "  url=" + result.data.avatarURL);
+			// 		jQuery("#avatarImg").attr("src",result.data.avatarURL);
+			// 		mui.toast("头像更换成功");
+	  //           },
+	  //           error:function(e) {
+	  //               alert("上传失败")
+	  //           }
+	  //       });
+	}
+	/**
+	 * 上传商品图片
+	 * @param {Object} cid
+	 */
+	function uploadImg(cid){
+		var flag = false;
+		formData.append("cid",cid);
+		if(jQuery("#commodityFile1").val() != ""){
+			formData.append('multipartFiles', document.getElementById("commodityFile1").files[0]);
+			flag = true;
+		}
+		if(jQuery("#commodityFile2").val() != ""){
+			formData.append('multipartFiles', document.getElementById("commodityFile2").files[0]);
+			flag = true;
+		}
+		if(jQuery("#commodityFile3").val() != ""){
+			formData.append('multipartFiles', document.getElementById("commodityFile3").files[0]);
+			flag = true;
+		}
+		//formData.append('multipartFiles[]', document.getElementById('avatarFile').files[0]);
+		if(flag){
+			jQuery.ajax({
+				url: getUrl() + "/api/v1/commodityPic",
+				type:"post",
+				data: formData,
+				headers : {
+					"Authorization" : window.localStorage.getItem("token")
+				},
+				contentType: false,
+				processData: false,
+				success: function(result) {
+					console.log("code:"+result.code + "  msg=" + result.msg);
+					console.log("商品发布成功");
+					mui.toast("商品发布成功");
+					//刷新发布页面
+					location.reload();
+				},
+					error:function(e) {
+						console.log(e.status);
+						console.log(e.responseText);
+						alert("上传失败")
+				}
+			});
+		}
+		
+		
+	}
 	
 	//获取图片list和相册按钮
-	var imageList = document.getElementById("imageList");
-	var galleryBtn = document.getElementById("galleryBtn");
+	// var imageList = document.getElementById("imageList");
+	// var galleryBtn = document.getElementById("galleryBtn");
 	/**
 	 * 相册按钮事件
 	 */
-	galleryBtn.addEventListener("tap", function() {
-		//从相册选取图片
-		plus.gallery.pick(
-			function(picPath) {
-				var img = "";
-				//alert(picPath.files.length);			
-				if(picPath.files.length > 3) {
-					alert("最多选择3张图片！");
-					return;
-				}
-				for(var i in picPath.files) {
-					img += "<img width=100 height=100 src=" + picPath.files[i] + ">";
-				}
-				imageList.innerHTML = img;
+	// galleryBtn.addEventListener("tap", function() {
+	// 	//从相册选取图片
+	// 	plus.gallery.pick(
+	// 		function(picPath) {
+	// 			var img = "";
+	// 			//alert(picPath.files.length);			
+	// 			if(picPath.files.length > 3) {
+	// 				alert("最多选择3张图片！");
+	// 				return;
+	// 			}
+	// 			for(var i in picPath.files) {
+	// 				img += "<img width=100 height=100 src=" + picPath.files[i] + ">";
+	// 				console.log(picPath.files[i])
+	// 			}
+	// 			imageList.innerHTML = img;
 
-			},
-			function(e) { //执行失败
-				console(e);
-			}, {
-				filter: "image",
-				multiple: true //图片多选
-			}
-		)
+	// 		},
+	// 		function(e) { //执行失败
+	// 			console(e);
+	// 		}, {
+	// 			filter: "image",
+	// 			multiple: true //图片多选
+	// 		}
+	// 	)
 
-	})
+	// })
 
 	//日期选择
 	var rentalTimeBtn = document.querySelector("#rentalTimeBtn");
@@ -192,10 +296,17 @@
 				success : function(result){
 					console.log("code:"+result.code+" msg:"+result.msg);
 					if(result.code == 200){
-						console.log("商品发布成功");
-						mui.toast("商品发布成功");
+						var cid = result.data.cid;
+						/**
+						 * 商品发布成功后上传商品图片
+						 */
+						uploadImg(cid);
+						//console.log("商品发布成功");
+						//mui.toast("商品发布成功");
+						
+						
 						//刷新发布页面
-						location.reload();
+						//location.reload();
 					}
 					else{
 						mui.toast("其他错误！");
@@ -211,5 +322,13 @@
 			mui.toast("商品信息不全");
 		}
 	});
+	
+	/**
+	 * 重置发布商品
+	 */
+	jQuery("#resetBtn").click(function(){
+		location.reload();
+		mui.toast("重置");
+	})
 	
 </script>

@@ -23,37 +23,36 @@
 					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
 					<div class="mui-slider-item mui-slider-item-duplicate">
 						<a href="#">
-							<img src="../image/phone3.jpg">
+							<img id="lastImg" src="../image/default3.jpg">
 						</a>
 					</div>
 					<!-- 第一张 -->
 					<div class="mui-slider-item">
 						<a href="#">
-							<img src="../image/phone1.png">
+							<img id="oneImg" src="../image/default1.jpg">
 						</a>
 					</div>
 					<!-- 第二张 -->
 					<div class="mui-slider-item">
 						<a href="#">
-							<img src="../image/phone2.jpg">
+							<img id="twoImg" src="../image/default2.jpg">
 						</a>
 					</div>
 					<!-- 第三张 -->
 					<div class="mui-slider-item">
 						<a href="#">
-							<img src="../image/phone3.jpg">
+							<img id="threeImg" src="../image/default3.jpg">
 						</a>
 					</div>
 					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
 					<div class="mui-slider-item mui-slider-item-duplicate">
 						<a href="#">
-							<img src="../image/phone1.png">
+							<img id="firstImg" src="../image/default1.jpg">
 						</a>
 					</div>
 				</div>
 				<div class="mui-slider-indicator">
 					<div class="mui-indicator mui-active"></div>
-					<div class="mui-indicator"></div>
 					<div class="mui-indicator"></div>
 					<div class="mui-indicator"></div>
 				</div>
@@ -148,6 +147,13 @@
 		"sellerId" : 0
 	}
 	
+	//发布者数据
+	var toUser = {
+		"uid" : 0,
+		"uname" : "",
+		"nickName" : ""
+	}
+	
 	/**
 	 * 商品详情页面初始化，获取商品详情信息
 	 */
@@ -175,8 +181,9 @@
 				if(result.code == 200){
 					//获取商品
 					var commodity = result.data.commodity;
+					var commodityPicList = result.data.commodity.commodityPicList;
 					//获取卖家昵称
-					var sellerNickName = result.data.nickName;
+					var sellerNickName = result.data.user.nickName;
 					//console.log("商品信息获取成功" + JSON.stringify(commodity));
 					jQuery("#titleDiv").html(commodity.title);
 					jQuery("#detailDiv").html(commodity.detail);
@@ -186,9 +193,34 @@
 					jQuery("#requestTimeDiv").html(longToDate1(commodity.requestTime));
 					jQuery("#shelfTimeDiv").html(longToDate2(commodity.shelfTime));
 					jQuery("#sellerDiv").html("发布者：" + sellerNickName);
+					//console.log(JSON.stringify(commodityPicList));
+					//若图片列表不为空
+					if(commodityPicList != ""){
+						console.log("true");
+						//得到图片列表长度
+						var len = commodityPicList.length;
+						//设置轮播图片
+						console.log(commodityPicList[0].picPath);
+						jQuery("#oneImg").attr("src",commodityPicList[0].picPath);
+						jQuery("#firstImg").attr("src",commodityPicList[0].picPath);
+						if(len == 2){
+							jQuery("#twoImg").attr("src",commodityPicList[1].picPath);
+						}
+						else if(len == 3){
+							jQuery("#twoImg").attr("src",commodityPicList[1].picPath);
+							jQuery("#threeImg").attr("src",commodityPicList[2].picPath);
+							jQuery("#lastImg").attr("src",commodityPicList[2].picPath);
+						}
+						
+					}
 					//向添加订单数据中添加商品id和卖家id
 					rentData.commodityId = commodity.cid;
 					rentData.sellerId = commodity.userId;
+					
+					//添加发布者数据
+					toUser.uid = commodity.userId;
+					toUser.nickName = sellerNickName;
+					toUser.uname = result.data.user.uname;
 					
 					//判断商品是否被租并且是否是自己发布的，若被租，则锁定rentBtn
 					var rentBtn = document.getElementById("rentBtn");
@@ -303,28 +335,31 @@
 	 */
 	var contactSellerBtn = document.getElementById("contactSellerBtn");
 	contactSellerBtn.addEventListener("tap", function() {
-		mui.openWindow({
-			url: "chat_message.html",
-			id: "chat_message.html",
-			styles: {
+		console.log(JSON.stringify(toUser));
+		if(toUser.uid != window.localStorage.getItem("uid")){
+			mui.openWindow({
+				url: "chat.html",
+				id: "chat.html",
+				styles: {
 
-			},
-			extras: {
-				//页面数据传递
-			},
-			show: {
-				autoShow: true, //页面loaded事件发生后自动显示，默认为true
-				aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
-				duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
-			},
-			waiting: {
-				autoShow: true, //自动显示等待框，默认为true
-				title: '正在加载...', //等待对话框上显示的提示内容
-				options: {
-					//width
-					//height
+				},
+				extras: {
+					talkUser: toUser	//传入发布者数据
+				},
+				show: {
+					autoShow: true, //页面loaded事件发生后自动显示，默认为true
+					aniShow: "slide-in-right", //页面显示动画，默认为”slide-in-right“；
+					duration: 100 //页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+				},
+				waiting: {
+					autoShow: true, //自动显示等待框，默认为true
+					title: '正在加载...', //等待对话框上显示的提示内容
+					options: {
+						//width
+						//height
+					}
 				}
-			}
-		});
+			});
+		}
 	});
 </script>

@@ -159,14 +159,21 @@
 					var commodityUl = document.getElementById("commodityUl");
 					for(var i = 0; i < n; i++ ){
 						var commodity = commodityList[i];
+						var commodityPicList = commodityList[i].commodity.commodityPicList;
 						var li = document.createElement("li");
 						li.className = "mui-table-view-cell mui-media";
 						li.id = commodity.commodity.cid;
 						var str = "";
-						
-						//str += "<li id=" + commodity.commodity.cid + " class='mui-table-view-cell mui-media'>";
 						str += 	"<a href='home_detail.html'>";
-						str +=		"<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
+						//查看图片列表是否有图片，无则显示default1，有就显示第一张
+						if(commodityPicList == ""){
+							console.log("list is null " + commodity.commodity.cid);
+							str +=		"<img class='mui-media-object mui-pull-left' src='../image/default1.jpg'>";
+						}
+						else{
+							console.log(commodityPicList[0].picPath);
+							str +=		"<img class='mui-media-object mui-pull-left' src='"+ commodityPicList[0].picPath +"'>";
+						}
 						str +=		"<div class='mui-media-body'>";
 						str +=			commodity.commodity.title;
 						str +=			"<p class='mui-ellipsis'>" + commodity.commodity.detail + "</p>";
@@ -188,9 +195,6 @@
 							str += 	"</div>";
 							str += "</button>";
 						}
-						
-						//str += "</li>";
-						
 						li.innerHTML = str;
 						commodityUl.appendChild(li);
 					}

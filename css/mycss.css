@@ -1,0 +1,51 @@
+.phead {
+	color: white;
+	text-align: center;
+	font-size: 20px;
+	padding: 20px;
+	background-color: #007AFF;
+}
+
+.user-list {
+	padding: 18px 15px;
+}
+
+.p-receiver {
+	color: black;
+	text-align: left;
+	padding: 5px 20px;
+	font-size: 18px;
+}
+
+.p-sender {
+	color: green;
+	text-align: right;
+	padding: 5px 20px;
+	font-size: 18px;
+}
+
+.mui-input-row {
+	height: 50px;
+	margin: 0px 10px;
+	padding-top: 6px;
+	padding-bottom: 8px;
+}
+
+.mui-input-row input {
+	width: 78%;
+	line-height: 1.1;
+}
+
+.mui-input-row .mui-btn {
+	width: 20%;
+	padding: 10px 0px;
+	line-height: 1.24;
+}
+
+.mybtn {
+	padding: 9px 20px;
+}
+
+.mui-content {
+	padding-bottom: 44px;
+}

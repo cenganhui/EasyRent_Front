@@ -15,11 +15,14 @@
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 			<h1 class="mui-title">修改个人信息</h1>
 		</header>
+
 		
 		<div class="mui-content">
 			<!--头像-->
 			<div style="text-align: center;">
-				<img id="avatorImg" height="200px" width="200px" src="../image/phone.jpg" />
+				<input id="avatarFile"  type="file" style="display: none!important;" onchange="upload()" accept="image/*"/>
+				<img id="avatarImg" height="200px" width="200px" src="../image/phone2.jpg"/>
+				<!-- <img id="avatorImg" height="200px" width="200px" src="../image/phone.jpg" /> -->
 			</div>
 			
 			<!--个人信息修改输入-->
@@ -77,6 +80,45 @@
 	});
 </script>
 <script type="text/javascript">
+	jQuery("#avatarImg").attr("src",window.localStorage.getItem("avatar"));
+	
+	//通过点击头像调用input中的方法
+	jQuery("#avatarImg").click(function(){
+		jQuery("#avatarFile").trigger("click");
+	})
+	/**
+	 * 上传头像
+	 */
+	function upload() {
+	        if ($("#avatarFile").val() == '') {
+	            return;
+	        }
+	        var formData = new FormData();
+			var temp = document.getElementById('avatarFile').files[0];
+	        formData.append('avatar', document.getElementById('avatarFile').files[0]);
+			console.log(temp.name);
+	        jQuery.ajax({
+	            url: getUrl() + "/api/v1/avatar",
+	            type:"post",
+	            data: formData,
+				headers : {
+					"Authorization" : window.localStorage.getItem("token")
+				},
+	            contentType: false,
+	            processData: false,
+	            success: function(result) {
+	                console.log("code:"+result.code + "  url=" + result.data.avatarURL);
+					jQuery("#avatarImg").attr("src",result.data.avatarURL);
+					mui.toast("头像更换成功");
+	            },
+	            error:function(e) {
+	                alert("上传失败")
+	            }
+	        });
+	    }
+	
+	
+	
 	/**
 	 * 确认修改事件
 	 */
@@ -139,22 +181,23 @@
 	/**
 	 * 为更换头像绑定事件
 	 */
-	var avatorImg = document.getElementById("avatorImg");
-	avatorImg.addEventListener("tap", function() {
-		//从相册选取图片
-		plus.gallery.pick(
-			function(picPath) {			
-				console.log(picPath);
-				avatorImg.setAttribute("src",picPath);
-			},
-			function(e) { //执行失败
-				console.log(e);
-			}, {
-				filter: "image",
-				multiple: false //单选
-			}
-		)
-	});
+	// var avatorImg = document.getElementById("avatorImg");
+	// avatorImg.addEventListener("tap", function() {
+	// 	//从相册选取图片
+	// 	plus.gallery.pick(
+	// 		function(picPath) {			
+	// 			console.log(picPath);
+	// 			avatorImg.setAttribute("src",picPath);
+				
+	// 		},
+	// 		function(e) { //执行失败
+	// 			console.log(e);
+	// 		}, {
+	// 			filter: "image",
+	// 			multiple: false //单选
+	// 		}
+	// 	)
+	// });
 	
 	
 </script>

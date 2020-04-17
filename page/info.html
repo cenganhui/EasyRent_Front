@@ -13,7 +13,7 @@
 		<div class="mui-content">
 			<!--头像-->
 			<div style="text-align: center;">
-				<img id="avatorImg" height="200px" width="200px" src="../image/phone.jpg" />
+				<img id="avatarImg" height="200px" width="200px" src="../image/defaultAvatar.jpg" />
 			</div>
 			<!--信息列表-->
 			<ul id="infoUl" class="mui-table-view">
@@ -132,6 +132,7 @@
 	else{
 		jQuery("#campusDiv").html("石牌校区");
 	}
+	jQuery("#avatarImg").attr("src",window.localStorage.getItem("avatar"));
 	
 	/**
 	 * 初始化页面时请求获取个人信息
@@ -170,6 +171,7 @@
 						window.localStorage.setItem("email",user.email);
 						window.localStorage.setItem("gender",user.gender);
 						window.localStorage.setItem("campus",user.campus);
+						window.localStorage.setItem("avatar",user.avatar);
 						//console.log("userName:"+user.uname);
 						jQuery("#userNameDiv").html(user.uname);
 						jQuery("#nickNameDiv").html(user.nickName);
@@ -190,6 +192,7 @@
 						else{
 							jQuery("#campusDiv").html("石牌校区");
 						}
+						jQuery("#avatarImg").attr("src",user.avatar);
 					}
 					else{
 						alert("其他错误！");

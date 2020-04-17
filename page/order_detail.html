@@ -23,37 +23,36 @@
 					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
 					<div class="mui-slider-item mui-slider-item-duplicate">
 						<a href="#">
-							<img src="../image/phone3.jpg">
+							<img id="lastImg" src="../image/default3.jpg">
 						</a>
 					</div>
 					<!-- 第一张 -->
 					<div class="mui-slider-item">
 						<a href="#">
-							<img src="../image/phone1.png">
+							<img id="oneImg" src="../image/default1.jpg">
 						</a>
 					</div>
 					<!-- 第二张 -->
 					<div class="mui-slider-item">
 						<a href="#">
-							<img src="../image/phone2.jpg">
+							<img id="twoImg" src="../image/default2.jpg">
 						</a>
 					</div>
 					<!-- 第三张 -->
 					<div class="mui-slider-item">
 						<a href="#">
-							<img src="../image/phone3.jpg">
+							<img id="threeImg" src="../image/default3.jpg">
 						</a>
 					</div>
 					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
 					<div class="mui-slider-item mui-slider-item-duplicate">
 						<a href="#">
-							<img src="../image/phone1.png">
+							<img id="firstImg" src="../image/default1.jpg">
 						</a>
 					</div>
 				</div>
 				<div class="mui-slider-indicator">
 					<div class="mui-indicator mui-active"></div>
-					<div class="mui-indicator"></div>
 					<div class="mui-indicator"></div>
 					<div class="mui-indicator"></div>
 				</div>
@@ -224,6 +223,7 @@
 					var sellerNickName = result.data.sellerNickName;
 					//获取订单中商品的商品
 					var commodity = result.data.order.commodity;
+					var commodityPicList = result.data.order.commodity.commodityPicList;
 					
 					//设置订单数据
 					orderData.oid = order.oid;
@@ -244,7 +244,24 @@
 					jQuery("#requestTimeDiv").html(longToDate1(commodity.requestTime));
 					jQuery("#actualTimeDiv").html(longToDate1(order.actualTime));
 					jQuery("#creationTimeDiv").html(longToDate2(order.creationTime));
-					
+					//若图片列表不为空
+					if(commodityPicList != ""){
+						console.log("true");
+						//得到图片列表长度
+						var len = commodityPicList.length;
+						//设置轮播图片
+						jQuery("#oneImg").attr("src",commodityPicList[0].picPath);
+						jQuery("#firstImg").attr("src",commodityPicList[0].picPath);
+						if(len == 2){
+							jQuery("#twoImg").attr("src",commodityPicList[1].picPath);
+						}
+						else if(len == 3){
+							jQuery("#twoImg").attr("src",commodityPicList[1].picPath);
+							jQuery("#threeImg").attr("src",commodityPicList[2].picPath);
+							jQuery("#lastImg").attr("src",commodityPicList[2].picPath);
+						}
+						
+					}
 					//获取订单状态
 					var status = order.status;
 					var statusDiv = document.getElementById("statusDiv");

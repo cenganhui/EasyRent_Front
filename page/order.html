@@ -91,14 +91,19 @@
 	    			var orderUl = document.getElementById("orderUl");
 	    			for(var i = 0; i < n; i++ ){
 	    				var commodity = orderList[i].commodity;
+						var commodityPicList = orderList[i].commodity.commodityPicList;
 	    				var li = document.createElement("li");
 	    				li.className = "mui-table-view-cell mui-media";
 						li.id = orderList[i].oid;
 	    				var str = "";
-	    				
-	    				//str += "<li id=" + orderList[i].oid + " class='mui-table-view-cell mui-media'>";
 	    				str += 	"<a href='order_detail.html'>";
-	    				str +=		"<img class='mui-media-object mui-pull-left' src='../image/phone.jpg'>";
+						//查看图片列表是否有图片，无则显示default1
+						if(commodityPicList == ""){
+							str +=		"<img class='mui-media-object mui-pull-left' src='../image/default1.jpg'>";
+						}
+						else{
+							str +=		"<img class='mui-media-object mui-pull-left' src='"+ commodityPicList[0].picPath +"'>";
+						}
 	    				str +=		"<div class='mui-media-body'>";
 	    				str +=			commodity.title;
 	    				str +=			"<p class='mui-ellipsis'>" + commodity.detail + "</p>";
@@ -148,8 +153,6 @@
 						
 						str += 	"</div>";
 						str += "</button>";
-	    				
-	    				//str += "</li>";
 	    				
 	    				li.innerHTML = str;
 	    				orderUl.appendChild(li);

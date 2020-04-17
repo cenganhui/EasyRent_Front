@@ -30,7 +30,7 @@
 				<span class="mui-icon mui-icon-contact"></span>
 				<span class="mui-tab-label">发布</span>
 			</a>
-			<a class="mui-tab-item" href="page/chat.html">
+			<a class="mui-tab-item" href="page/contact_list.html">
 				<span class="mui-icon mui-icon-paperplane"></span>
 				<span class="mui-tab-label">消息</span>
 			</a>
@@ -53,7 +53,7 @@
 
 <script type="text/javascript">
 	//子页面数组
-	var subPages = ['page/home.html', 'page/my_publish.html', 'page/publish.html', 'page/chat.html', 'page/info.html'];
+	var subPages = ['page/home.html', 'page/my_publish.html', 'page/publish.html', 'page/contact_list.html', 'page/info.html'];
 	//子页面打开样式风格
 	var subPageStyle = {
 		top: '44px', //顶部保留
@@ -95,6 +95,10 @@
 		//获取到a中的href属性，对应到子页面的id
 		var tagPage = this.getAttribute("href");
 		//显示子页面，（id，效果，执行时间）
+		//判断是否点击了消息页，若是，则刷新消息页，便于接收新消息
+		if(tagPage == "page/contact_list.html"){
+			plus.webview.getWebviewById(tagPage).reload()
+		}
 		plus.webview.show(tagPage, "fade-in", 100);
 	});
 
